@@ -1,0 +1,16 @@
+﻿.idea
+.arts
+**/__pycache__
+domo/logs
+domo/static
+domo/venv
+domo/db
+domo_front/node_modules
+domo_front/dist
+domo_front/dist.zip
+domo/domo_backend.zip
+domo*.zip
+dist.zip
+domo_app*.tar
+/deploy/
+domo/utils/ffmpeg

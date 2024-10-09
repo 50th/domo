@@ -1,0 +1,6 @@
+.idea
+**/__pycache__
+domo/logs
+domo/venv
+domo/static
+domo/db
