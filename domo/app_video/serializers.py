@@ -3,6 +3,7 @@ from rest_framework import serializers
 
 from app_video.models import Video
 from utils.common_funcs import check_file_type
+from utils.video_operator import VideoOperator
 
 
 class VideoSerializer(serializers.ModelSerializer):
@@ -16,10 +17,14 @@ class VideoSerializer(serializers.ModelSerializer):
         video_type = check_file_type(video)
         validated_data['video_name'] = video.name
         validated_data['video_size'] = video.size
-        # validated_data['video_duration'] = get_video_duration(video)
         validated_data['video_type'] = video_type
         validated_data['upload_user'] = self.context['request'].user
-        return super().create(validated_data)
+        video_obj = super().create(validated_data)  # type: Video
+        vo = VideoOperator(video_obj.video_path.path)
+        # 使用 ffmpeg 获取视频时长
+        video_obj.video_duration = vo.video_info.duration_time
+        video_obj.save(update_fields=['video_duration'])
+        return video_obj
 
     class Meta:
         model = Video

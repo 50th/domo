@@ -39,6 +39,7 @@ export interface VideoInfo {
   video_uuid: string
   video_name: string
   video_size: number
+  video_duration: number
   video_type: string
   upload_user: number
   upload_username: string

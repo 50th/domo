@@ -20,13 +20,13 @@
             <el-table :data="videoList" size="default" stripe @sort-change="handleSortChange">
                 <el-table-column sortable="custom" prop="video_name" label="视频名称"></el-table-column>
                 <el-table-column prop="video_type" label="视频类型" width="300" />
-                <el-table-column sortable="custom" prop="video_size" :formatter="parseFileSize" label="视频大小"
-                    width="110" />
+                <el-table-column prop="video_duration" :formatter="parseVideoDuration" label="视频时长" width="100" />
                 <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="160" />
                 <el-table-column width="130">
                     <template #default="scope">
                         <div v-show="!scope.row.downloading">
-                            <el-button type="success" text plain  @click="router.push({ name: 'playVideo', params: { id: scope.row.id } })">播放</el-button>
+                            <el-button type="success" text plain
+                                @click="router.push({ name: 'playVideo', params: { id: scope.row.id } })">播放</el-button>
                             <el-button type="danger" text plain
                                 @click="delFile(scope.row.id, scope.row.video_name)">删除</el-button>
                         </div>
@@ -133,24 +133,17 @@ const delFile = (videoId: number, video_name: string) => {
 }
 
 /**
- * 格式化文件大小
- * @param row 
- * @param column 
+ * 格式化视频时长
+ * @param row
+ * @param column
  * @param cellValue 单元格值
- * @param index 
+ * @param index
  */
-const parseFileSize = (row: any, column: any, cellValue: number, index: any) => {
-    cellValue /= 1024
-    if (cellValue < 1024) {
-        return Number(cellValue.toFixed(2)) + ' KB';
-    } else {
-        cellValue /= 1024;
-        if (cellValue < 1024) {
-            return Number(cellValue.toFixed(2)) + ' MB';
-        } else {
-            return Number((cellValue / 1024).toFixed(2)) + ' GB';
-        }
-    }
+const parseVideoDuration = (row: any, column: any, cellValue: number, index: any) => {
+    let seconds = cellValue % 60;
+    let minutes = ((cellValue - seconds) / 60) % 60;
+    let hours = Math.floor(cellValue / 3600);
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
 }
 
 onMounted(async () => {
