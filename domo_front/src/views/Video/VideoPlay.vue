@@ -47,7 +47,6 @@ const router = useRouter();
 const user = useUserStore();
 const userInfo = user.getUser();
 const videoId = route.params.id as string;
-const videoUrl = `${baseUrl}/api-video/video_serve/${videoId}/`
 
 const videoInfo = ref<VideoInfo>();
 

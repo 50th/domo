@@ -5,7 +5,7 @@
         </el-col>
         <el-col :span="1">
             <el-upload style="display: inline; margin-left: 12px;" v-loading.fullscreen.lock="fullscreenLoading"
-                :show-file-list="false" :action="`${baseUrl}/api-video/videos/`"
+                :show-file-list="false" :action="videoUploadApi"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="video_path"
                 :on-progress="openLoading" :on-success="afterUploadFile" :on-error="fileUploadError">
                 <el-button color="#626aef" size="default" type="primary" text plain round>上传视频</el-button>
@@ -54,9 +54,8 @@ import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'
 
-import { getVideoListApi, delVideoApi } from '@/apis/videoApis'
+import { getVideoListApi, delVideoApi, videoUploadApi } from '@/apis/videoApis'
 import { useUserStore } from '@/stores/user'
-import { baseUrl } from '@/utils/baseUrl'
 import type { VideoInfo, UserInfo } from '@/interfaces'
 
 const router = useRouter()

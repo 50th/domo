@@ -7,9 +7,10 @@
                         <span>Domo</span>
                     </div>
                 </template>
-                <el-form label-width="auto" :model="loginForm" size="normal" hide-required-asterisk="true">
+                <el-form style="padding: 5% 15% 0 15%;" label-width="auto" :model="loginForm" size="default"
+                    :hide-required-asterisk="true">
                     <el-form-item :required="true" label="用户名">
-                        <el-input v-model="loginForm.username"/>
+                        <el-input v-model="loginForm.username" />
                     </el-form-item>
                     <el-form-item :required="true" label="密码">
                         <el-input v-model="loginForm.password" type="password" show-password @keyup.enter="userLogin" />
@@ -49,10 +50,15 @@ const userLogin = () => {
     if (loginForm.username && loginForm.password) {
         loginApi(loginForm.username, loginForm.password).then(res => {
             if (res.code == 0) {
+                if (loginForm.save_password) {
+                    localStorage.setItem('username', loginForm.username);
+                    // 密码转为 base64 保存
+                    localStorage.setItem('password', window.btoa(Date.now() + '_' + loginForm.password));
+                }
                 user.setUser(res.data)
                 router.push({ name: 'home' });
             }
-        }).catch(err => { })
+        })
     } else {
         ElMessage.warning('请输入用户名密码');
     }
@@ -61,6 +67,16 @@ const userLogin = () => {
 onMounted(async () => {
     if (userInfo) {
         router.push({ name: 'home' });
+    } else {
+        // 检查是否保存了密码
+        const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
+        if (username && password) {
+            const pwd = window.atob(password);
+            loginForm.username = username;
+            loginForm.password = pwd.split('_')[1];
+            loginForm.save_password = true;
+        }
     }
 })
 </script>

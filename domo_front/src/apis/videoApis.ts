@@ -1,4 +1,5 @@
 import axiosInstance from './axiosInstance'
+import { baseUrl } from '@/utils/baseUrl'
 
 const apiPrefix = '/api-video'
 
@@ -17,3 +18,5 @@ export async function uploadVideoApi(data: any, config: any): Promise<any> {
 export async function delVideoApi(id: number | string): Promise<any> {
   return axiosInstance.delete(`${apiPrefix}/videos/${id}/`)
 }
+
+export const videoUploadApi = `${baseUrl}/api-video/videos/`
