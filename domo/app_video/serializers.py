@@ -1,3 +1,5 @@
+import logging
+
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from rest_framework import serializers
 
@@ -5,6 +7,7 @@ from app_video.models import Video
 from utils.common_funcs import check_file_type
 from utils.video_operator import VideoOperator
 
+logger = logging.getLogger(__name__)
 
 class VideoSerializer(serializers.ModelSerializer):
     video_path = serializers.FileField(write_only=True)  # 序列化时不返回字段
@@ -20,10 +23,14 @@ class VideoSerializer(serializers.ModelSerializer):
         validated_data['video_type'] = video_type
         validated_data['upload_user'] = self.context['request'].user
         video_obj = super().create(validated_data)  # type: Video
-        vo = VideoOperator(video_obj.video_path.path)
         # 使用 ffmpeg 获取视频时长
-        video_obj.video_duration = vo.video_info.duration_time
-        video_obj.save(update_fields=['video_duration'])
+        try:
+            vo = VideoOperator(video_obj.video_path.path)
+        except FileNotFoundError as e:
+            logger.error('get video duration fail: %s', e)
+        else:
+            video_obj.video_duration = vo.video_info.duration_time
+            video_obj.save(update_fields=['video_duration'])
         return video_obj
 
     class Meta:

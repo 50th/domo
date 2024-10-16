@@ -8,47 +8,47 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: () => import('@/views/Home.vue')
+      component: () => import('@/views/HomeView.vue')
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('@/views/About.vue')
+      component: () => import('@/views/AboutView.vue')
     },
     {
       path: '/articles',
       name: 'articleList',
-      component: () => import('@/views/Article/ArticleList.vue')
+      component: () => import('@/views/ArticleViews/ArticleList.vue')
     },
     {
       path: '/articles/:id(\\d+)',
       name: 'articleDetail',
-      component: () => import('@/views/Article/ArticleDetail.vue')
+      component: () => import('@/views/ArticleViews/ArticleDetail.vue')
     },
     {
       path: '/articles/edit-article/:id(\\d+)',
       name: 'editArticle',
-      component: () => import('@/views/Article/EditArticle.vue')
+      component: () => import('@/views/ArticleViews/EditArticle.vue')
     },
     {
       path: '/articles/add-article',
       name: 'addArticle',
-      component: () => import('@/views/Article/AddArticle.vue')
+      component: () => import('@/views/ArticleViews/AddArticle.vue')
     },
     {
       path: '/files',
       name: 'fileList',
-      component: () => import('@/views/File/FileList.vue')
+      component: () => import('@/views/FileViews/FileList.vue')
     },
     {
       path: '/videos',
       name: 'videoList',
-      component: () => import('@/views/Video/VideoList.vue')
+      component: () => import('@/views/VideoViews/VideoList.vue')
     },
     {
       path: '/videos/:id(\\d+)',
       name: 'playVideo',
-      component: () => import('@/views/Video/VideoPlay.vue')
+      component: () => import('@/views/VideoViews/VideoPlay.vue')
     },
     {
       path: '/login',

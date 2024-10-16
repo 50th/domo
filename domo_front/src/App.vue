@@ -62,7 +62,7 @@ const handleSelect = (key: string, keyPath: string[]) => {
 
 const logout = (e: MouseEvent) => {
   console.log('logout');
-  if (userInfo) {
+  if (userInfo.value) {
     user.delUser();
     userInfo.value = null;
     // router.push({name: 'index'});

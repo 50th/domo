@@ -7,7 +7,7 @@
         </el-col>
     </el-row>
     <el-row>
-        <el-col :span="7" :offset="5">
+        <el-col :span="6" :offset="6">
             <el-card style="margin-right: 25px;">
                 <template #header>
                     <div style="text-align: center;">
@@ -16,7 +16,7 @@
                 </template>
                 <div class="top-box">
                     <ul>
-                        <li v-for="item in articleViewTopList">
+                        <li v-for="item in articleViewTopList" :key="item.id">
                             <span @click="router.push({ name: 'articleDetail', params: { id: item.id } })"
                                 style="float: left;cursor: pointer;">
                                 {{ item.title }}
@@ -27,7 +27,7 @@
                 </div>
             </el-card>
         </el-col>
-        <el-col :span="7">
+        <el-col :span="6">
             <el-card style="margin-left: 25px;">
                 <template #header>
                     <div style="text-align: center;">
@@ -36,7 +36,7 @@
                 </template>
                 <div class="top-box">
                     <ul>
-                        <li v-for="item in fileDownloadTopList">
+                        <li v-for="item in fileDownloadTopList" :key="item.id">
                             <span style="float: left;">{{ item.filename }}</span>
                             <span style="float: right;">{{ item.download_count }}</span>
                         </li>
@@ -104,7 +104,7 @@ onMounted(() => {
 }
 
 .top-box {
-    font-size: 1.2rem;
+    font-size: 1rem;
     /* font-family: "FangSong"; */
 
     ul {

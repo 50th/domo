@@ -109,8 +109,7 @@ class VideoOperator:
 
     def __init__(self, video_path: Union[str, Path]):
         if not os.path.exists(FFMPEG_EXE):
-            raise FileNotFoundError(
-                f"FFmpeg executable not found at {FFMPEG_EXE}")
+            raise FileNotFoundError(f"FFmpeg executable not found at {FFMPEG_EXE}")
         if not os.path.exists(video_path):
             raise FileNotFoundError(f"Source video not found: {video_path}")
         self.source_video_path = video_path
