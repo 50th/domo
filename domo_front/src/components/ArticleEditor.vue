@@ -26,7 +26,7 @@
 
     <el-row style="margin-bottom: 10px; margin-top: 10px;">
         <el-col :span="4" :offset="2" style="align-content: center;">
-            <el-input v-model="title" size="normal" placeholder="文章标题" />
+            <el-input v-model="title" size="default" placeholder="文章标题" />
         </el-col>
         <el-col :span="2" :offset="1" style="align-content: center;">
             <el-switch v-model="status" :active-value="1" :inactive-value="0" active-text="隐藏" />

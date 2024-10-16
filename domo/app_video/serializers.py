@@ -9,6 +9,7 @@ from utils.video_operator import VideoOperator
 
 logger = logging.getLogger(__name__)
 
+
 class VideoSerializer(serializers.ModelSerializer):
     video_path = serializers.FileField(write_only=True)  # 序列化时不返回字段
     upload_username = serializers.ReadOnlyField(source='upload_user.username', default='')
@@ -29,7 +30,7 @@ class VideoSerializer(serializers.ModelSerializer):
         except FileNotFoundError as e:
             logger.error('get video duration fail: %s', e)
         else:
-            video_obj.video_duration = vo.video_info.duration_time
+            video_obj.video_duration = vo.video_info.duration_seconds
             video_obj.save(update_fields=['video_duration'])
         return video_obj
 

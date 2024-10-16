@@ -31,8 +31,8 @@ class VideoInfo:
     视频信息
     """
     video_name: str
-    duration: str
-    duration_time: float
+    duration_str: str  # ffmpeg 输出的原始时间
+    duration_seconds: float  # 转换为秒数
     bitrate: str
     encoding: str
     width: str
@@ -40,7 +40,7 @@ class VideoInfo:
     fps: int
 
     def __str__(self) -> str:
-        return (f'时长：{self.duration} '
+        return (f'时长：{self.duration_str} '
                 f'编码：{self.encoding} '
                 f'分辨率：{self.width}x{self.height} '
                 f'帧率：{self.fps}')
@@ -102,7 +102,7 @@ class VideoOperator:
     :param video_path: 视频路径
     """
     # 解析 FFMPEG 输出的视频信息正则表达式
-    VideoInfoReStr = (r'.+Duration: (?P<duration>\d+:\d+:\d+.\d+), start.+'
+    VideoInfoReStr = (r'.+Duration: (?P<duration_str>\d+:\d+:\d+.\d+), start.+'
                       r'bitrate: (?P<bitrate>\d+) kb/s.+'
                       r'Video: (?P<encoding>.+?),.+, (?P<width>\d+)x(?P<height>\d+)'
                       r'.+, (?P<fps>\d+.?\d*) fps,.+')
@@ -122,25 +122,28 @@ class VideoOperator:
         """
         cmd = [FFMPEG_EXE, '-i', self.source_video_path, '-hide_banner']
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        _, stderr_data = p.communicate()
+        _, stderr_data = p.communicate()  # FFMPEG 的所有输出信息都在 err 中
         video_info_str = stderr_data.decode()
         # print(video_info_str)
         match_res = re.match(self.VideoInfoReStr,
                              video_info_str, flags=re.DOTALL)
         if match_res:
-            hours, minutes, seconds = map(float, match_res.groupdict()['duration'].split(':'))
+            # 计算视频时长
+            hours, minutes, seconds = map(float, match_res.groupdict()['duration_str'].split(':'))
             duration_time = hours * 3600 + minutes * 60 + seconds
             video_info = VideoInfo(
                 video_name=os.path.basename(self.source_video_path),
-                duration_time=duration_time,
+                duration_seconds=duration_time,
                 **match_res.groupdict())
             return video_info
         return None
 
     def convert_video(self, out_video_path: Union[str, Path],
                       video_decoder: str = None,
-                      out_video_encoder: str = None, out_video_format: str = None,
-                      out_video_bitrate: int = None, out_video_fps: str = None,
+                      out_video_encoder: str = None,
+                      out_video_format: str = None,
+                      out_video_bitrate: int = None,
+                      out_video_fps: str = None,
                       out_video_res: str = None):
         """
         视频转换
@@ -169,12 +172,17 @@ class VideoOperator:
         if out_video_res:
             cmd.extend(['-s', out_video_res])
         cmd.append(out_video_path)
-        print(cmd)
-        print(' '.join(cmd))
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE)
+        # print(cmd)
+        # print(' '.join(cmd))
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stderr_thread = threading.Thread(
             target=stream_reader,
-            args=(p, self.video_info.duration_time, self.progress_q)
+            args=(p, self.video_info.duration_seconds, self.progress_q)
         )
         stderr_thread.start()
+
+
+if __name__ == '__main__':
+    video_path = r'C:\Users\sjdd\Downloads\Crab_Rave.mp4'
+    vo = VideoOperator(video_path)
+    print(vo.video_info)
