@@ -1,7 +1,7 @@
 version: "3.4"
 services:
   nginx:
-    image: hub.atomgit.com/amd64/nginx:1.24-bullseye
+    image: nginx:1.24.0-bullseye
     container_name: domo_nginx
     restart: always
     # 挂载目录
@@ -19,7 +19,7 @@ services:
         ipv4_address: 172.16.238.2
 
   domo:
-    image: domo_app:1.1.4
+    image: domo_app:1.2.1
     container_name: domo_app
     restart: always
     # 挂载目录

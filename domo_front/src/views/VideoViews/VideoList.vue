@@ -19,8 +19,10 @@
         <el-col :span="14" :offset="5">
             <el-table :data="videoList" size="default" stripe @sort-change="handleSortChange">
                 <el-table-column sortable="custom" prop="video_name" label="视频名称"></el-table-column>
-                <el-table-column prop="video_type" label="视频类型" width="300" />
+                <el-table-column prop="video_type" label="视频类型" width="200" />
                 <el-table-column prop="video_duration" :formatter="parseVideoDuration" label="视频时长" width="100" />
+                <el-table-column prop="video_res" label="视频分辨率" width="150" />
+                <el-table-column prop="video_bitrate" label="视频比特率" width="100" />
                 <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="160" />
                 <el-table-column width="130">
                     <template #default="scope">

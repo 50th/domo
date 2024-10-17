@@ -4,3 +4,4 @@ domo/logs
 domo/venv
 domo/static
 domo/db
+domo/utils/ffmpeg/ffmpeg.exe

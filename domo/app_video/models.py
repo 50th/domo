@@ -26,8 +26,11 @@ class Video(models.Model):
     video_name = models.CharField(max_length=128, null=False, blank=True, verbose_name='视频名称')
     video_size = models.IntegerField(null=False, blank=True, verbose_name='文件大小(bytes)')
     video_duration = models.IntegerField(null=True, blank=True, verbose_name='视频时间长度')
+    video_bitrate = models.IntegerField(null=True, blank=True, verbose_name='视频码率')
+    video_width = models.IntegerField(null=True, blank=True, verbose_name='视频宽度')
+    video_height = models.IntegerField(null=True, blank=True, verbose_name='视频高度')
     video_type = models.CharField(max_length=64, null=False, blank=True, verbose_name='视频类型')
-    video_path = models.FileField(upload_to=create_file_path, null=False, verbose_name='文件')
+    video_path = models.FileField(upload_to=create_file_path, null=False, verbose_name='视频路径')
     upload_time = models.DateTimeField(auto_now_add=True, null=False, blank=True, verbose_name='上传时间')
     upload_user = models.ForeignKey(User, null=True, on_delete=models.DO_NOTHING, verbose_name='上传人')
 

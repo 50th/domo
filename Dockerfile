@@ -1,4 +1,4 @@
-FROM hub.atomgit.com/amd64/python:3.9.18-slim-bullseye
+FROM python:3.9.18-slim-bullseye
 
 # 工作目录
 WORKDIR /usr/local/domo

@@ -40,6 +40,8 @@ export interface VideoInfo {
   video_name: string
   video_size: number
   video_duration: number
+  video_res: string
+  video_bitrate: number
   video_type: string
   upload_user: number
   upload_username: string
