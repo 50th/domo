@@ -17,11 +17,23 @@
           </el-icon>
           <span>文件</span>
         </el-menu-item>
+        <el-menu-item index="/wallpapers">
+          <el-icon>
+            <Picture />
+          </el-icon>
+          <span>壁纸</span>
+        </el-menu-item>
         <el-menu-item v-if="userInfo && userInfo.is_superuser" index="/videos">
           <el-icon>
             <Film />
           </el-icon>
           <span>视频</span>
+        </el-menu-item>
+        <el-menu-item index="/tools">
+          <el-icon>
+            <Brush />
+          </el-icon>
+          <span>工具</span>
         </el-menu-item>
         <el-menu-item index="/about">
           <el-icon>

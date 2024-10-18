@@ -41,6 +41,16 @@ const router = createRouter({
       component: () => import('@/views/FileViews/FileList.vue')
     },
     {
+      path: '/wallpapers',
+      name: 'wallpaper',
+      component: () => import('@/views/WallpaperView.vue')
+    },
+    {
+      path: '/tools',
+      name: 'tool',
+      component: () => import('@/views/ToolView.vue')
+    },
+    {
       path: '/videos',
       name: 'videoList',
       component: () => import('@/views/VideoViews/VideoList.vue')

@@ -6,11 +6,11 @@ from django.db import models
 from django.conf import settings
 
 
-def create_file_path(instance: models.FileField, filename: str):
+def create_file_path(instance: 'File', filename: str):
     """
     创建文件保存路径
 
-    :param instance: models.FileField 对象
+    :param instance: File 对象
     :param filename: 文件名
     """
     file_dir = settings.FILE_APP.get('FILE_SAVE_DIR') / datetime.now().strftime('%Y-%m-%d')
