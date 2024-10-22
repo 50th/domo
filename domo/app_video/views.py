@@ -13,6 +13,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from app_video.models import Video
 from app_video.serializers import VideoSerializer
+from constants.reponse_codes import ResponseCode
 
 logger = logging.getLogger(__name__)
 
@@ -48,8 +49,8 @@ class VideoViewSet(viewsets.ModelViewSet):
         except Exception as e:
             logger.error('destroy file error: %s', e)
             logger.error('destroy file error: %s', traceback.format_exc())
-            return Response(3)
-        return Response(0)
+            return Response(ResponseCode.SERVER_EXCEPTION)
+        return Response(ResponseCode.OK)
 
 
 def video_iterator(file_path: Union[str, Path], start_p: int, end_p: int, chunk_size: int = 512):

@@ -47,7 +47,7 @@
 
 1. 进入 domo 目录
 2. 使用 python 3.9.2 及以上
-3. 安装依赖库：`pip install -r requirements_devdev.txt -i https://pypi.doubanio.com/simple`
+3. 安装依赖库：`pip install -r requirements_dev.txt -i https://pypi.doubanio.com/simple`
 4. 从 <https://github.com/BtbN/FFmpeg-Builds/releases> 下载 FFMPEG 可执行文件，放入 utils/ffmpeg 目录下
 5. 初始化数据库：
    - `python manage.py makemigrations -settings=domo.settings.dev`

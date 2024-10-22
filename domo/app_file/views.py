@@ -16,6 +16,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from app_file.models import File, FileDownloadLog
 from app_file.serializers import FileSerializer
+from constants.reponse_codes import ResponseCode
 
 logger = logging.getLogger(__name__)
 
@@ -92,23 +93,22 @@ class FileViewSet(mixins.CreateModelMixin,
         try:
             instance = self.get_object()  # type: File
         except Http404:
-            response = Response(3000)
+            response = Response(ResponseCode.FILE_NOT_EXIST)
         else:
             if Path(instance.file_path.path).exists():
                 if settings.DEV is True:
-                    response = FileResponse(instance.file_path.open('rb'), as_attachment=True,
-                                            filename=instance.filename)
+                    response = FileResponse(instance.file_path, as_attachment=True, filename=instance.filename,
+                                            content_type='application/octet-stream')
                 else:
                     # 正式环境配置跳转，由 nginx 负责下载
                     headers = {
-                        'X-Accel-Redirect': f'/{urllib.parse.quote(str(instance.file_path))}',
+                        'X-Accel-Redirect': f'/{urllib.parse.quote(instance.file_path.path)}',
                         'X-Accel-Buffering': 'yes',
                         'Content-Type': 'application/octet-stream',
                         'Content-Disposition': f'attachment; filename={urllib.parse.quote(instance.filename)}'
                     }
                     logger.info('response headers: %s', headers)
-                    response = Response(status=200, headers=headers,
-                                        content_type='application/octet-stream')
+                    response = Response(status=200, headers=headers, content_type='application/octet-stream')
                 download_log = FileDownloadLog.objects.create(
                     file=instance,
                     user=request.user if not request.user.is_anonymous else None,
@@ -116,7 +116,7 @@ class FileViewSet(mixins.CreateModelMixin,
                 )
                 download_log.save()
             else:
-                response = Response(3000)
+                response = Response(ResponseCode.FILE_NOT_EXIST)
         return response
 
     def create(self, request, *args, **kwargs):
@@ -126,7 +126,7 @@ class FileViewSet(mixins.CreateModelMixin,
         user = request.user
         file_size = serializer.validated_data['file_path'].size
         if not user.is_authenticated and file_size > settings.FILE_APP.get('MAX_FILE_SIZE'):
-            return Response(3001)
+            return Response(ResponseCode.FILE_TOO_LARGE)
         # 记录上传文件用户
         if user and user.is_authenticated:
             serializer.validated_data['upload_user'] = user
@@ -145,5 +145,5 @@ class FileViewSet(mixins.CreateModelMixin,
         except Exception as e:
             logger.error('destroy file error: %s', e)
             logger.error('destroy file error: %s', traceback.format_exc())
-            return Response(3)
-        return Response(0)
+            return Response(ResponseCode.SERVER_EXCEPTION)
+        return Response(ResponseCode.OK)

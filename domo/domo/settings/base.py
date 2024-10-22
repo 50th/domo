@@ -259,7 +259,7 @@ DEV = False
 # 文章相关配置
 ARTICLE_APP = {
     'IMG_EXTENSIONS': ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'),  # 上传图片限制
-    'MAX_IMAGE_SIZE': 1024 * 1024 * 10,
+    'MAX_IMAGE_SIZE': 1024 * 1024 * 1,
     'IMG_SAVE_DIR': Path('static/article_app/img'),
     'MD_FILE_SAVE_DIR': Path('static/article_app'),
     'MD_FILE_MAX_SIZE': 1024 * 1024 * 5,
@@ -273,4 +273,11 @@ FILE_APP = {
 
 VIDEO_APP = {
     'VIDEO_DIR': Path('static/video_app'),
+}
+
+# 壁纸相关配置
+WALLPAPER_APP = {
+    'MAX_SIZE': 1024 * 1024 * 2,
+    'SAVE_DIR': Path('static/wallpaper_app'),
+    'THUMB_SAVE_DIR': Path('static/wallpaper_app/thumb'),
 }

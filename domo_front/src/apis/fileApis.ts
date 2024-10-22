@@ -29,12 +29,12 @@ export async function downloadFile(
   updateProgressBar: ProgressCallback
 ): Promise<void> {
   try {
-    const updateProgress = debounce(updateProgressBar, 250) // 500ms 防抖间隔时间
+    const updateProgress = debounce(updateProgressBar, 200) // 200ms 防抖间隔时间
 
     const response: AxiosResponse = await axios({
       url: `${baseUrl}${apiPrefix}/files/${file.id}/`,
       method: 'GET',
-      // responseType: 'blob', // 接收二进制数据
+      responseType: 'blob', // 接收二进制数据
       headers: token ? { Authorization: 'Bearer ' + token } : {},
       onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
         const total = progressEvent.total
@@ -69,8 +69,8 @@ export async function downloadFile(
       link.download = filename // 指定下载后的文件名，防跳转
       document.body.appendChild(link)
       link.click()
-      window.URL.revokeObjectURL(urlBlob)
       document.body.removeChild(link)
+      window.URL.revokeObjectURL(urlBlob)
     }
   } catch (error) {
     console.error('Error downloading the file:', error)

@@ -9,10 +9,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from app_article.serializers import ArticleListSerializer, ArticleSerializer, UploadImgForm
+from app_article.serializers import ArticleListSerializer, ArticleSerializer
 from app_article.models import Article, ArticleEditLog, ArticleActivityLog
 from constants.constants import ArticleStatus, ArticleActionType
+from constants.reponse_codes import ResponseCode
 from utils.common_funcs import generate_article, save_article_file
+from utils.image_manager import ImageFile
 
 logger = logging.getLogger(__name__)
 
@@ -42,23 +44,33 @@ class ArticleImgView(APIView):
     permission_classes = [permissions.IsAdminUser]  # 需要管理员权限
 
     def post(self, request):
-        form = UploadImgForm(files=request.FILES)
-        if form.is_valid():
-            img = request.FILES['img']
-            name, suffix = img.name.rsplit('.', 1)
-            img_name = f'article_img_{uuid.uuid4()}.{suffix}'
-            img_path = settings.ARTICLE_APP.get('IMG_SAVE_DIR') / img_name
-            # 保存图片
-            if not settings.ARTICLE_APP.get('IMG_SAVE_DIR').exists():
-                settings.ARTICLE_APP.get('IMG_SAVE_DIR').mkdir(parents=True)
-            with open(img_path, 'wb') as destination:
-                for chunk in img.chunks():
-                    destination.write(chunk)
-            res = {'name': img.name, 'url': f'/static/article_app/img/{img_name}', 'title': name}
+        img = request.FILES.get('img')
+        if img:
+            with ImageFile(img) as image:
+                if image.is_image():
+                    if img.size > settings.ARTICLE_APP.get('MAX_IMAGE_SIZE', 1024 * 1024 * 10):
+                        response = ResponseCode.IMAGE_TOO_LARGE
+                    else:
+                        img_save_dir = settings.ARTICLE_APP.get('IMG_SAVE_DIR')
+                        name, suffix = img.name.rsplit('.', 1)
+                        img_name = f'article_img_{uuid.uuid4()}.{suffix}'
+                        img_path = img_save_dir / img_name
+                        # 保存图片
+                        if not img_save_dir.exists():
+                            img_save_dir.mkdir(parents=True)
+                        with open(img_path, 'wb') as destination:
+                            for chunk in img.chunks():
+                                destination.write(chunk)
+                        response = {
+                            'name': img.name,
+                            'url': f'/{img_path}',
+                            'title': name
+                        }
+                else:
+                    response = ResponseCode.MUST_BE_IMAGE
         else:
-            logger.info('img upload valid fail: %s', form.errors)
-            res = 2000
-        return Response(res)
+            response = ResponseCode.PARAM_MISSING
+        return Response(response)
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
@@ -110,7 +122,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
             instance.save()
             return Response(serializer.data)
         except Http404:
-            return Response(2001)
+            return Response(ResponseCode.ARTICLE_NOT_EXIST)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -139,18 +151,18 @@ class ArticleViewSet(viewsets.ModelViewSet):
 
             return Response(serializer.data)
         else:
-            return Response(1000)
+            return Response(ResponseCode.PERMISSION_DENIED)
 
     def destroy(self, request, *args, **kwargs):
         try:
             instance = self.get_object()
             if request.user.is_superuser or instance.author == request.user:
                 self.perform_destroy(instance)
-                return Response(0)
+                return Response(ResponseCode.OK)
             else:
-                return Response(1000)
+                return Response(ResponseCode.PERMISSION_DENIED)
         except Http404:
-            return Response(2001)
+            return Response(ResponseCode.ARTICLE_NOT_EXIST)
 
 
 class ArticleFileView(APIView):
@@ -179,11 +191,11 @@ class ArticleFileView(APIView):
                         'author': request.user,
                     }
                     Article.objects.create(**article_info).save()
-                    res = 0
+                    res = ResponseCode.OK
                 else:
-                    res = 2003
+                    res = ResponseCode.IMAGE_TOO_LARGE
             else:
-                res = 2002
+                res = ResponseCode.MUST_BE_MARKDOWN
         else:
-            res = 2002
+            res = ResponseCode.PARAM_MISSING
         return Response(res)

@@ -1,11 +1,9 @@
 from pathlib import Path
 
 from django.conf import settings
-from django import forms
 from rest_framework import serializers
 
 from app_article.models import Article
-from constants.constants import ArticleActionType
 from utils.common_funcs import generate_article, save_article_file
 
 
@@ -45,13 +43,3 @@ class ArticleSerializer(ArticleListSerializer):
         model = Article
         fields = ['id', 'title', 'content', 'status', 'status_display', 'author', 'author_name', 'create_time',
                   'last_edit_time', 'view_count', 'like_count']
-
-
-class UploadImgForm(forms.Form):
-    img = forms.ImageField()
-
-    def clean_img(self):
-        img = self.cleaned_data['img']
-        if img.size > settings.ARTICLE_APP.get('MAX_IMAGE_SIZE', 1024 * 1024 * 10):
-            raise forms.ValidationError('图片过大')
-        return img

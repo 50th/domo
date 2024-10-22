@@ -27,4 +27,5 @@ urlpatterns = [
     path('api-article/', include('app_article.urls')),
     path('api-file/', include('app_file.urls')),
     path('api-video/', include('app_video.urls')),
+    path('api-wallpaper/', include('app_wallpaper.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

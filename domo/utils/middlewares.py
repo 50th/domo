@@ -6,6 +6,8 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.deprecation import MiddlewareMixin
 
+from constants.reponse_codes import ResponseCode
+
 logger = logging.getLogger(__name__)
 
 
@@ -26,7 +28,6 @@ class RequestLoggingMiddleware(MiddlewareMixin):
             client_ip = request.META.get('REMOTE_ADDR')
         # 记录 ip 方便在视图中使用
         request.META['CLIENT_IP'] = client_ip
-        # 如果需要记录用户信息，并且用户已登录
         logger.info('%s %s from %s', request.path, request.method, client_ip)
         return None
 
@@ -43,7 +44,7 @@ class JsonHandleMiddleware:
                 request.json = json.loads(request.body)
             except Exception as e:
                 logger.error('请求参数异常：%s %s', e, request.body)
-                return 2
+                return ResponseCode.PARAM_ERROR
 
         response = self.get_response(request)
         return response
@@ -70,7 +71,7 @@ class JWTMiddleware:
     def __call__(self, request):
         logger.info('%s %s', request.path, request.method)
         # 根据 token 获取用户信息
-        res_code = 0
+        res_code = ResponseCode.OK
         # request.user = None
         authorization_header = request.headers.get('Authorization', '')
         if authorization_header:
@@ -83,18 +84,18 @@ class JWTMiddleware:
                     request.user = user
                 else:
                     logger.error('用户不存在：%s', user_id)
-                    res_code = 1004
+                    res_code = ResponseCode.USER_NOT_EXIST
             except jwt.ExpiredSignatureError as _:
                 logger.error('token 过期')
-                res_code = 1003
+                res_code = ResponseCode.LOGIN_EXPIRED
             except jwt.InvalidTokenError as _:
                 logger.error('不可用的 token')
-                res_code = 1003
+                res_code = ResponseCode.LOGIN_EXPIRED
             except Exception as _:
                 logger.error('token 校验失败：%s', _)
-                res_code = 1003
+                res_code = ResponseCode.LOGIN_EXPIRED
         else:
-            res_code = 1003
+            res_code = ResponseCode.LOGIN_EXPIRED
 
         # 如果接口限制登录，返回错误码
         if not is_excluded_endpoint(request.path, request.method) and res_code != 0:

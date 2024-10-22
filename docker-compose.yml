@@ -19,7 +19,7 @@ services:
         ipv4_address: 172.16.238.2
 
   domo:
-    image: domo_app:1.2.1
+    image: domo_app:1.2.2
     container_name: domo_app
     restart: always
     # 挂载目录
