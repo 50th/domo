@@ -47,3 +47,13 @@ export interface VideoInfo {
   upload_username: string
   upload_time: string
 }
+
+export interface WallpaperInfo {
+  id: string
+  image_name: string
+  image_size: number
+  image_res: string
+  upload_time: string
+  upload_user: number
+  upload_username: string
+}

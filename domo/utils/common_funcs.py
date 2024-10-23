@@ -37,6 +37,7 @@ def generate_article(content: str) -> str:
 def save_article_file(title: str, content: str, file_dir: Path) -> Path:
     """
     将数据另外单独保存为文件
+
     :param title: 文章标题
     :param content: 文章内容
     :param file_dir: 保存目录

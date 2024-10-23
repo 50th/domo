@@ -41,6 +41,7 @@ def create_image_path(img_name: str):
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
 def upload_wallpaper(request):
+    """壁纸上传"""
     image = request.FILES.get('wallpaper')
     if not image:
         return Response(ResponseCode.PARAM_MISSING)
@@ -62,6 +63,37 @@ def upload_wallpaper(request):
             return Response(ResponseCode.OK)
         else:
             return Response(ResponseCode.PARAM_ERROR)
+
+
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def wallpaper_thumb(request, wallpaper_id: str):
+    """缩略图请求"""
+    if not wallpaper_id:
+        return Response(ResponseCode.PARAM_MISSING)
+    wallpaper = Wallpaper.objects.filter(id=wallpaper_id).first()
+    if wallpaper:
+        thumb_path = settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / wallpaper.image_name
+        if thumb_path.exists():
+            if settings.DEV is True:
+                response = FileResponse(open(thumb_path, 'rb'), as_attachment=True, filename=wallpaper.image_name,
+                                        content_type='application/octet-stream')
+            else:
+                # 正式环境配置跳转，由 nginx 负责下载
+                headers = {
+                    'X-Accel-Redirect': f'/{urllib.parse.quote(thumb_path)}',
+                    'X-Accel-Buffering': 'yes',
+                    'Content-Type': 'application/octet-stream',
+                    'Content-Disposition': f'attachment; filename={urllib.parse.quote(wallpaper.image_name)}'
+                }
+                logger.info('response headers: %s', headers)
+                response = Response(status=200, headers=headers, content_type='application/octet-stream')
+            return response
+        else:
+            return Response(ResponseCode.WALLPAPER_NOT_EXIST)
+    else:
+        return Response(ResponseCode.WALLPAPER_NOT_EXIST)
 
 
 class WallpaperViewSet(mixins.RetrieveModelMixin,

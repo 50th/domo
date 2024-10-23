@@ -34,14 +34,18 @@ class VideoSerializer(serializers.ModelSerializer):
         # 使用 ffmpeg 获取视频时长
         try:
             vo = VideoOperator(video_obj.video_path.path)
-        except FileNotFoundError as e:
+        except Exception as e:
             logger.error('get video duration fail: %s', e)
+            video_obj.video_path.delete()
+            video_obj.delete()
+            raise e
         else:
-            video_obj.video_duration = vo.video_info.duration_seconds
-            video_obj.video_bitrate = vo.video_info.bitrate
-            video_obj.video_width = vo.video_info.width
-            video_obj.video_height = vo.video_info.height
-            video_obj.save(update_fields=['video_duration', 'video_bitrate', 'video_width', 'video_height'])
+            if vo.video_info:
+                video_obj.video_duration = vo.video_info.duration_seconds
+                video_obj.video_bitrate = vo.video_info.bitrate
+                video_obj.video_width = vo.video_info.width
+                video_obj.video_height = vo.video_info.height
+                video_obj.save(update_fields=['video_duration', 'video_bitrate', 'video_width', 'video_height'])
         return video_obj
 
     class Meta:

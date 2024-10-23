@@ -8,5 +8,6 @@ router.register(r'wallpapers', views.WallpaperViewSet)
 
 urlpatterns = [
     path('upload-wallpaper/', views.upload_wallpaper),
+    path('wallpaper-thumb/<str:wallpaper_id>/', views.wallpaper_thumb),
     path('', include(router.urls)),
 ]

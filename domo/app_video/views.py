@@ -7,7 +7,7 @@ from typing import Union
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import StreamingHttpResponse, HttpResponseNotFound, Http404
-from rest_framework import viewsets, filters, permissions
+from rest_framework import viewsets, filters, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -33,6 +33,22 @@ class VideoViewSet(viewsets.ModelViewSet):
         if not user.is_superuser:
             queryset = queryset.filter(upload_user=user)
         return queryset.order_by('-upload_time')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            self.perform_create(serializer)
+        except FileNotFoundError as _:
+            return Response(ResponseCode.VIDEO_SAVE_FIELD)
+        except FileExistsError as _:
+            return Response(ResponseCode.VIDEO_FILE_CORRUPTED)
+        except Exception as e:
+            logger.error('create video error: %s', e)
+            logger.error('create video error: %s', traceback.format_exc())
+            return Response(ResponseCode.SERVER_EXCEPTION)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def destroy(self, request, *args, **kwargs):
         try:

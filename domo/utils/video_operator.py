@@ -109,9 +109,9 @@ class VideoOperator:
 
     def __init__(self, video_path: Union[str, Path]):
         if not os.path.exists(FFMPEG_EXE):
-            raise FileNotFoundError(f"FFmpeg executable not found at {FFMPEG_EXE}")
+            raise FileNotFoundError(f'FFmpeg executable not found at {FFMPEG_EXE}')
         if not os.path.exists(video_path):
-            raise FileNotFoundError(f"Source video not found: {video_path}")
+            raise FileNotFoundError(f'Source video not found: {video_path}')
         self.source_video_path = video_path
         self.video_info = self.get_video_info()
         self.progress_q = queue.Queue()  # 创建一个队列接收进度信息
@@ -124,9 +124,10 @@ class VideoOperator:
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _, stderr_data = p.communicate()  # FFMPEG 的所有输出信息都在 err 中
         video_info_str = stderr_data.decode()
-        # print(video_info_str)
-        match_res = re.match(self.VideoInfoReStr,
-                             video_info_str, flags=re.DOTALL)
+        # 检查视频文件错误
+        if 'Error opening input files: Invalid data found when processing input' in video_info_str:
+            raise FileExistsError('Invalid data found when processing input')
+        match_res = re.match(self.VideoInfoReStr, video_info_str, flags=re.DOTALL)
         if match_res:
             # 计算视频时长
             hours, minutes, seconds = map(float, match_res.groupdict()['duration_str'].split(':'))
