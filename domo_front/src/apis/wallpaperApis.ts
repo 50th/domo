@@ -1,49 +1,18 @@
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
-import type { AxiosResponse, AxiosProgressEvent } from 'axios'
+import type { AxiosResponse } from 'axios'
 import axiosInstance from './axiosInstance'
 import { baseUrl } from '@/utils/baseUrl'
-import type { FileInfo } from '@/interfaces'
 
 const apiPrefix = '/api-wallpaper'
 
-type ProgressCallback = (file: FileInfo, progress: number) => void
-
-// 防抖函数
-function debounce<ProgressCallback extends (...args: any) => any>(
-  func: ProgressCallback,
-  wait: number
-): ProgressCallback {
-  let startTime = Date.now()
-  return function (this: any, ...args: Parameters<ProgressCallback>) {
-    if (Date.now() - wait >= startTime) {
-      func.apply(this, args)
-      startTime = Date.now()
-    }
-  } as ProgressCallback
-}
-
-export async function downloadFile(
-  file: FileInfo,
-  token: string | null,
-  updateProgressBar: ProgressCallback
-): Promise<void> {
+export async function downloadWallpaperApi(wallpaper_id: string, token: string | null): Promise<void> {
   try {
-    const updateProgress = debounce(updateProgressBar, 200) // 200ms 防抖间隔时间
-
     const response: AxiosResponse = await axios({
-      url: `${baseUrl}${apiPrefix}/files/${file.id}/`,
+      url: `${baseUrl}${apiPrefix}/wallpapers/${wallpaper_id}/`,
       method: 'GET',
       responseType: 'blob', // 接收二进制数据
-      headers: token ? { Authorization: 'Bearer ' + token } : {},
-      onDownloadProgress: (progressEvent: AxiosProgressEvent) => {
-        const total = progressEvent.total
-        const current = progressEvent.loaded
-        if (total) {
-          const percentage = Math.floor((current / total) * 100)
-          updateProgress(file, percentage)
-        }
-      }
+      headers: token ? { Authorization: 'Bearer ' + token } : {}
     })
     if (response.headers['content-type'].startsWith('application/json')) {
       const resCode = response.data.code
@@ -74,7 +43,7 @@ export async function downloadFile(
     }
   } catch (error) {
     console.error('Error downloading the file:', error)
-    ElMessage.warning('下载文件失败，请稍后再试')
+    ElMessage.warning('下载壁纸失败，请稍后再试')
   }
 }
 

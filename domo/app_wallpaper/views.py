@@ -129,8 +129,8 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
         else:
             if Path(instance.image_path).exists():
                 if settings.DEV is True:
-                    response = FileResponse(instance.image_path, as_attachment=True, filename=instance.image_name,
-                                            content_type='application/octet-stream')
+                    response = FileResponse(open(instance.image_path, 'rb'), as_attachment=True,
+                                            filename=instance.image_name, content_type='application/octet-stream')
                 else:
                     # 正式环境配置跳转，由 nginx 负责下载
                     headers = {

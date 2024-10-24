@@ -9,7 +9,7 @@ class WallpaperSerializer(serializers.ModelSerializer):
     upload_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False, read_only=True)
 
     def get_image_res(self, obj: Wallpaper):
-        return f'{obj.image_width}x{obj.image_height}'
+        return f'{obj.image_width} x {obj.image_height}'
 
     class Meta:
         model = Wallpaper

@@ -9,7 +9,10 @@
                 :show-file-list="false" :action="`${baseUrl}/api-wallpaper/upload-wallpaper/`"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="wallpaper"
                 :on-progress="openLoading" :on-success="afterUploadWallpaper" :on-error="wallpaperUploadError">
-                <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
+                <el-tooltip content="上传壁纸会统一转为 JPG 格式" placement="top" effect="light">
+                    <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
+                </el-tooltip>
+
             </el-upload>
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
@@ -23,11 +26,18 @@
                     <el-card shadow="hover" body-style="padding: 10px">
                         <!-- <template #header>Yummy hamburger</template> -->
                         <div class="mask">
-                            <h2>mask</h2>
+                            <div style="margin-top: 15%;">
+                                <el-button @click="downloadWallpaper(wallpaper.id)">下载</el-button>
+                                <el-button
+                                    v-if="!wallpaper.upload_user || (userInfo && (userInfo.id == wallpaper.upload_user || userInfo.is_superuser))"
+                                    type="danger"
+                                    @click="delWallpaper(wallpaper.id, wallpaper.image_name)">删除</el-button>
+                            </div>
+
+                            <h3>{{ wallpaper.image_res }}</h3>
                         </div>
                         <el-image :src="`${baseUrl}/api-wallpaper/wallpaper-thumb/${wallpaper.id}/`"
                             style="width: 320px; height: 180px;" />
-
                     </el-card>
 
                 </div>
@@ -47,7 +57,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'
 
-import { getWallpaperListApi, delWallpaperApi, downloadFile } from '@/apis/wallpaperApis'
+import { getWallpaperListApi, delWallpaperApi, downloadWallpaperApi } from '@/apis/wallpaperApis'
 import { useUserStore } from '@/stores/user'
 import { baseUrl } from '@/utils/baseUrl'
 import type { WallpaperInfo, UserInfo } from '@/interfaces'
@@ -133,10 +143,14 @@ const wallpaperUploadError = () => {
     fullscreenLoading.value = false;
 }
 
-const delFile = (id: string, filename: string) => {
+const downloadWallpaper = (id: string) => {
+    downloadWallpaperApi(id, userInfo.value ? userInfo.value.access : null);
+}
+
+const delWallpaper = (id: string, image_name: string) => {
     delWallpaperApi(id).then(res => {
         if (res.code == 0) {
-            ElMessage.success(`${filename} 删除成功`);
+            ElMessage.success(`${image_name} 删除成功`);
             refreshWallpaperList();
         }
     });
@@ -195,7 +209,8 @@ onMounted(async () => {
         .el-image:hover {
             z-index: 0;
         }
-        .mask:hover{
+
+        .mask:hover {
             z-index: 3;
         }
     }

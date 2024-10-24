@@ -14,7 +14,7 @@ def get_lock_filename(log_file: Path) -> Path:
     :return: 锁文件名称
     """
     # hide the file on Unix and generally from file completion
-    lock_file = log_file.parent / f'.__{log_file.name.removesuffix("log")}.lock'
+    lock_file = log_file.parent / f'.__{log_file.name.removesuffix(".log")}.lock'
     return lock_file
 
 
@@ -160,8 +160,8 @@ class ConcurrentRotatingFileHandler(RotatingFileHandler):
         if not os.path.exists(file_dir):
             os.makedirs(file_dir)
 
-        lock_filename = get_lock_filename(filename)
-        self.concurrent_lock = portalocker.Lock(lock_filename, flags=portalocker.LOCK_EX)
+        self.lock_filename = get_lock_filename(filename)
+        # self.concurrent_lock = portalocker.Lock(lock_filename, flags=portalocker.LOCK_EX)
 
     def _do_rollover(self, record):
         # 检查日志文件是否需要翻转
@@ -172,7 +172,12 @@ class ConcurrentRotatingFileHandler(RotatingFileHandler):
         base_stream.close()
         if base_stream_length >= self.maxBytes:
             # print('current pid: %d, doRollover' % os.getpid())
-            super().doRollover()
+            try:
+                super().doRollover()
+            except PermissionError as e:
+                if self.stream:
+                    self.stream.close()
+                    self.stream = None
         else:
             if self.stream:
                 self.stream.close()
@@ -187,7 +192,7 @@ class ConcurrentRotatingFileHandler(RotatingFileHandler):
         Output the record to the file, catering for rollover as described
         in doRollover().
         """
-        with self.concurrent_lock:
+        with portalocker.Lock(self.lock_filename, flags=portalocker.LOCK_EX):
             try:
                 if self.shouldRollover(record):
                     # print('current pid: %d, shouldRollover: %d' % (os.getpid(), self.shouldRollover(record)))

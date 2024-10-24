@@ -227,7 +227,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'utils.log_handler.ConcurrentRotatingFileHandler',  # 滚动生成日志，切割
             'filename': LOG_DIR / 'domo.log',  # 日志文件名
-            'maxBytes': 5 * 1024 * 1024,  # 单个日志文件最大为 10M
+            'maxBytes': 5 * 1024 * 1024,  # 单个日志文件最大为 5M
             'backupCount': 10,  # 日志备份文件最大数量
             'formatter': 'simple',  # 简单格式
             'encoding': 'utf-8',  # 防止中文乱码
@@ -277,7 +277,7 @@ VIDEO_APP = {
 
 # 壁纸相关配置
 WALLPAPER_APP = {
-    'MAX_SIZE': 1024 * 1024 * 2,
+    'MAX_SIZE': 1024 * 1024 * 5,
     'SAVE_DIR': Path('static/wallpaper_app'),
     'THUMB_SAVE_DIR': Path('static/wallpaper_app/thumb'),
 }
