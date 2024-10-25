@@ -80,9 +80,9 @@ def wallpaper_thumb(request, wallpaper_id: str):
                 response = FileResponse(open(thumb_path, 'rb'), as_attachment=True, filename=wallpaper.image_name,
                                         content_type='application/octet-stream')
             else:
-                # 正式环境配置跳转，由 nginx 负责下载
+                # 正式环境配置跳转，跳转到 nginx 负责下载
                 headers = {
-                    'X-Accel-Redirect': f'/{urllib.parse.quote(thumb_path)}',
+                    'X-Accel-Redirect': f'/{urllib.parse.quote(str(thumb_path))}',
                     'X-Accel-Buffering': 'yes',
                     'Content-Type': 'application/octet-stream',
                     'Content-Disposition': f'attachment; filename={urllib.parse.quote(wallpaper.image_name)}'
@@ -114,6 +114,7 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
     def get_queryset(self):
         queryset = self.queryset
         user = self.request.user  # type: User
+        print(user)
         if user and user.is_authenticated:
             if not user.is_superuser:
                 queryset = queryset.filter(Q(upload_user=None) | Q(upload_user=user))
@@ -125,7 +126,8 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
         try:
             instance = self.get_object()  # type: Wallpaper
         except Http404:
-            response = Response(ResponseCode.FILE_NOT_EXIST)
+            logger.info('wallpaper not exist: %s', kwargs.get('id'))
+            response = Response(ResponseCode.WALLPAPER_NOT_EXIST)
         else:
             if Path(instance.image_path).exists():
                 if settings.DEV is True:
@@ -148,7 +150,8 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
                 # )
                 # download_log.save()
             else:
-                response = Response(ResponseCode.FILE_NOT_EXIST)
+                logger.info('wallpaper file not exist: %s', instance.image_path)
+                response = Response(ResponseCode.WALLPAPER_NOT_EXIST)
         return response
 
     def destroy(self, request, *args, **kwargs):
@@ -159,6 +162,7 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
             self.perform_destroy(instance)
             if image_path.exists():
                 image_path.unlink()
+            # 删除缩略图
             thumb_path = settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / instance.image_name
             if thumb_path.exists():
                 thumb_path.unlink()

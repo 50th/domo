@@ -8,6 +8,7 @@ COPY ./domo /usr/local/domo
 # 安装依赖库
 RUN pip install --no-cache-dir -r requirements_pro.txt -i https://mirrors.aliyun.com/pypi/simple/ && pip cache purge
 RUN mkdir logs
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list  # 更改 apt 为国内源
 # 暴露端口
 EXPOSE 8899
 # 环境变量

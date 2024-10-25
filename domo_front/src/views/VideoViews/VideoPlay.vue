@@ -30,7 +30,7 @@
     </el-row>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from 'vue-router';
 
 import { ElMessage, ElMessageBox } from 'element-plus';
@@ -49,6 +49,8 @@ const userInfo = user.getUser();
 const videoId = route.params.id as string;
 
 const videoInfo = ref<VideoInfo>();
+
+const player = ref<Player | null>(null);
 
 const delVideo = () => {
     ElMessageBox.confirm(
@@ -81,7 +83,7 @@ onMounted(() => {
     getVideoApi(videoId).then(res => {
         if (res.code == 0) {
             videoInfo.value = res.data;
-            const player = new Player({
+            player.value = new Player({
                 id: 'mse',
                 url: `${baseUrl}/api-video/video_serve/${videoInfo.value?.video_uuid}/`,
                 width: '100%',
@@ -90,4 +92,10 @@ onMounted(() => {
         }
     })
 });
+onUnmounted(() => {
+    // 切换页面后，销毁播放器
+    if (player.value) {
+        player.value.destroy();
+    }
+})
 </script>

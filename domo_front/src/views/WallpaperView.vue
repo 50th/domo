@@ -9,7 +9,7 @@
                 :show-file-list="false" :action="`${baseUrl}/api-wallpaper/upload-wallpaper/`"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="wallpaper"
                 :on-progress="openLoading" :on-success="afterUploadWallpaper" :on-error="wallpaperUploadError">
-                <el-tooltip content="上传壁纸会统一转为 JPG 格式" placement="top" effect="light">
+                <el-tooltip content="上传壁纸会统一转为 JPEG 格式" placement="top" effect="light">
                     <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
                 </el-tooltip>
 
@@ -27,6 +27,7 @@
                         <!-- <template #header>Yummy hamburger</template> -->
                         <div class="mask">
                             <div style="margin-top: 15%;">
+                                <el-button @click="previewWallpaper()">预览</el-button>
                                 <el-button @click="downloadWallpaper(wallpaper.id)">下载</el-button>
                                 <el-button
                                     v-if="!wallpaper.upload_user || (userInfo && (userInfo.id == wallpaper.upload_user || userInfo.is_superuser))"
@@ -37,7 +38,9 @@
                             <h3>{{ wallpaper.image_res }}</h3>
                         </div>
                         <el-image :src="`${baseUrl}/api-wallpaper/wallpaper-thumb/${wallpaper.id}/`"
-                            style="width: 320px; height: 180px;" />
+                            style="width: 320px; height: 180px;"
+                            :preview-src-list="[`${baseUrl}/api-wallpaper/wallpapers/${wallpaper.id}/`]"
+                            ref="previewImg" :z-index="5" />
                     </el-card>
 
                 </div>
@@ -74,7 +77,6 @@ const searchVal = ref<string>();
 const ordering = ref<string>();
 
 const refreshWallpaperList = () => {
-    // 请求文件列表
     getWallpaperListApi({ page_num: currentPage, page_size: pageSize.value, search: searchVal.value, ordering: ordering.value }).then(res => {
         // console.log(res);
         if (res.code == 0) {
@@ -142,6 +144,10 @@ const afterUploadWallpaper = (response: any, uploadFile: UploadFile, uploadFiles
 const wallpaperUploadError = () => {
     fullscreenLoading.value = false;
 }
+const previewImg = ref(null)
+const previewWallpaper = () => {
+    previewImg.value?.clickHandler();
+}
 
 const downloadWallpaper = (id: string) => {
     downloadWallpaperApi(id, userInfo.value ? userInfo.value.access : null);
@@ -207,6 +213,14 @@ onMounted(async () => {
         }
 
         .el-image:hover {
+            z-index: 0;
+        }
+
+        img {
+            z-index: 1;
+        }
+
+        img:hover {
             z-index: 0;
         }
 

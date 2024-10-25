@@ -12,7 +12,6 @@ class ImageFile(object):
         self.image_path = image_path
         try:
             self.img = Image.open(image_path)
-            logger.info('ImageFile load image successfully')
             self.width = self.img.width
             self.height = self.img.height
             self.format = self.img.format
@@ -30,12 +29,18 @@ class ImageFile(object):
         :param output_path: The path to save the converted image.
         """
         try:
-            self.img.save(output_path)
+            self.img.save(output_path, 'JPEG', quality=100, subsampling=0)  # 尽量保证图片质量不下降
             logger.info('ImageFile convert_image_format image saved to %s', output_path)
         except Exception as e:
             logger.error('ImageFile convert_image_format error: %s', e)
 
     def save_thumb(self, thumb_img_path: Union[str, Path]):
+        """
+        保存缩略图
+
+        :param thumb_img_path: 保存路径
+        :return:
+        """
         thumb_img = self.img.resize((480, 270))
         thumb_img.save(thumb_img_path)
 
