@@ -105,16 +105,9 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
     authentication_classes = [JWTAuthentication]
     permission_classes = []
 
-    def get_permissions(self):
-        # list 和 retrieve 不进行权限校验
-        if self.action in ('list', 'retrieve'):
-            self.permission_classes = []
-        return [permission() for permission in self.permission_classes]
-
     def get_queryset(self):
         queryset = self.queryset
         user = self.request.user  # type: User
-        print(user)
         if user and user.is_authenticated:
             if not user.is_superuser:
                 queryset = queryset.filter(Q(upload_user=None) | Q(upload_user=user))

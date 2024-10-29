@@ -22,27 +22,27 @@
     <el-row>
         <el-col :span="24" :offset="0" style="text-align: center;">
             <div class="demo-image">
-                <div v-for="wallpaper in wallpaperList" :key="wallpaper.id" class="block">
+                <div v-for="(wallpaper, index) in wallpaperList" :key="wallpaper.id" class="block">
                     <el-card shadow="hover" body-style="padding: 10px">
                         <!-- <template #header>Yummy hamburger</template> -->
                         <div class="mask">
                             <div style="margin-top: 15%;">
-                                <el-button @click="previewWallpaper()">预览</el-button>
+                                <el-button @click="previewWallpaper(index)">预览</el-button>
                                 <el-button @click="downloadWallpaper(wallpaper.id)">下载</el-button>
                                 <el-button
                                     v-if="!wallpaper.upload_user || (userInfo && (userInfo.id == wallpaper.upload_user || userInfo.is_superuser))"
                                     type="danger"
                                     @click="delWallpaper(wallpaper.id, wallpaper.image_name)">删除</el-button>
                             </div>
-
                             <h3>{{ wallpaper.image_res }}</h3>
+                            <p>{{ parseSize(wallpaper.image_size) }}</p>
                         </div>
                         <el-image :src="`${baseUrl}/api-wallpaper/wallpaper-thumb/${wallpaper.id}/`"
-                            style="width: 320px; height: 180px;"
-                            :preview-src-list="[`${baseUrl}/api-wallpaper/wallpapers/${wallpaper.id}/`]"
-                            ref="previewImg" :z-index="5" />
+                            style="width: 320px; height: 180px;" :z-index="5" />
+                        <el-image-viewer v-if="showViewerList[index]" @close="() => { showViewerList[index] = false }"
+                            hide-on-click-modal="true"
+                            :url-list="[`${baseUrl}/api-wallpaper/wallpapers/${wallpaper.id}/`]" />
                     </el-card>
-
                 </div>
             </div>
         </el-col>
@@ -75,6 +75,7 @@ let currentPage = 1;
 const pageSize = ref<number>(10);
 const searchVal = ref<string>();
 const ordering = ref<string>();
+const showViewerList = ref<boolean[]>([]);
 
 const refreshWallpaperList = () => {
     getWallpaperListApi({ page_num: currentPage, page_size: pageSize.value, search: searchVal.value, ordering: ordering.value }).then(res => {
@@ -145,8 +146,9 @@ const wallpaperUploadError = () => {
     fullscreenLoading.value = false;
 }
 const previewImg = ref(null)
-const previewWallpaper = () => {
-    previewImg.value?.clickHandler();
+const previewWallpaper = (index: number) => {
+    console.log("preview");
+    showViewerList.value[index] = true;
 }
 
 const downloadWallpaper = (id: string) => {
@@ -164,21 +166,18 @@ const delWallpaper = (id: string, image_name: string) => {
 
 /**
  * 格式化文件大小
- * @param row 
- * @param column 
- * @param cellValue 单元格值
- * @param index 
+ * @param img_size 图片大小字节数
  */
-const parseFileSize = (row: any, column: any, cellValue: number, index: any) => {
-    cellValue /= 1024
-    if (cellValue < 1024) {
-        return Number(cellValue.toFixed(2)) + ' KB';
+const parseSize = (img_size: number) => {
+    img_size /= 1024
+    if (img_size < 1024) {
+        return Number(img_size.toFixed(2)) + ' KB';
     } else {
-        cellValue /= 1024;
-        if (cellValue < 1024) {
-            return Number(cellValue.toFixed(2)) + ' MB';
+        img_size /= 1024;
+        if (img_size < 1024) {
+            return Number(img_size.toFixed(2)) + ' MB';
         } else {
-            return Number((cellValue / 1024).toFixed(2)) + ' GB';
+            return Number((img_size / 1024).toFixed(2)) + ' GB';
         }
     }
 }
@@ -210,17 +209,17 @@ onMounted(async () => {
 
         .el-image {
             z-index: 2;
+
+            img {
+                z-index: 1;
+            }
+
+            img:hover {
+                z-index: 0;
+            }
         }
 
         .el-image:hover {
-            z-index: 0;
-        }
-
-        img {
-            z-index: 1;
-        }
-
-        img:hover {
             z-index: 0;
         }
 
