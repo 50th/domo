@@ -71,7 +71,7 @@
 
 ## 打包
 
-1. 修改`version.txt`文件中的版本
+1. 修改`version.txt`文件中的版本号
 2. 执行`pack.sh`脚本打包
 3. 默认`domo_x.x.x.zip`打包到 deploy 目录下
 
@@ -79,4 +79,4 @@
 
 1. 创建 domo 目录
 2. 将`domo_x.x.x.zip`上传到 domo 目录下并解压：`unzip -o domo_x.x.x.zip`
-3. 执行`install.sh`脚本部署服务
+3. 执行`bash install.sh`脚本部署服务

@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="5">
+        <el-col :span="4" :offset="0">
             <el-input v-model="searchVal" size="default" placeholder="搜索(文件名)" clearable
                 @change="refreshWallpaperList" />
         </el-col>
@@ -12,35 +12,30 @@
                 <el-tooltip content="上传壁纸会统一转为 JPEG 格式" placement="top" effect="light">
                     <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
                 </el-tooltip>
-
             </el-upload>
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
             <span>壁纸总数：{{ wallpaperCount }}</span>
         </el-col>
     </el-row>
-    <el-row>
-        <el-col :span="24" :offset="0" style="text-align: center;">
+    <el-row style="margin-top: 10px;">
+        <el-col :span="4" v-for="(wallpaper, index) in wallpaperList" :key="wallpaper.id" style="text-align: center;">
             <div class="demo-image">
-                <div v-for="(wallpaper, index) in wallpaperList" :key="wallpaper.id" class="block">
-                    <el-card shadow="hover" body-style="padding: 10px">
-                        <!-- <template #header>Yummy hamburger</template> -->
+                <div class="block">
+                    <el-card shadow="hover" body-style="padding: 5px">
                         <div class="mask">
-                            <div style="margin-top: 15%;">
+                            <div style="margin-top: 10%;">
                                 <el-button @click="previewWallpaper(index)">预览</el-button>
                                 <el-button @click="downloadWallpaper(wallpaper.id)">下载</el-button>
-                                <el-button
-                                    v-if="!wallpaper.upload_user || (userInfo && (userInfo.id == wallpaper.upload_user || userInfo.is_superuser))"
-                                    type="danger"
+                                <el-button v-if="userInfo && userInfo.is_superuser" type="danger"
                                     @click="delWallpaper(wallpaper.id, wallpaper.image_name)">删除</el-button>
                             </div>
                             <h3>{{ wallpaper.image_res }}</h3>
                             <p>{{ parseSize(wallpaper.image_size) }}</p>
                         </div>
-                        <el-image :src="`${baseUrl}/api-wallpaper/wallpaper-thumb/${wallpaper.id}/`"
-                            style="width: 320px; height: 180px;" :z-index="5" />
+                        <el-image fit="scale-down" :src="`${baseUrl}/api-wallpaper/wallpaper-thumb/${wallpaper.id}/`" />
                         <el-image-viewer v-if="showViewerList[index]" @close="() => { showViewerList[index] = false }"
-                            hide-on-click-modal="true"
+                            :hide-on-click-modal="true"
                             :url-list="[`${baseUrl}/api-wallpaper/wallpapers/${wallpaper.id}/`]" />
                     </el-card>
                 </div>
@@ -145,7 +140,7 @@ const afterUploadWallpaper = (response: any, uploadFile: UploadFile, uploadFiles
 const wallpaperUploadError = () => {
     fullscreenLoading.value = false;
 }
-const previewImg = ref(null)
+
 const previewWallpaper = (index: number) => {
     console.log("preview");
     showViewerList.value[index] = true;
@@ -190,24 +185,23 @@ onMounted(async () => {
 <style>
 .demo-image {
     .block {
-        padding: 30px 0;
+        padding: 10px 0;
         text-align: center;
-        margin-right: 5px;
         display: inline-block;
         box-sizing: border-box;
         vertical-align: top;
 
         .mask {
             position: absolute;
-            width: 320px;
-            height: 180px;
-            background: rgba(101, 101, 101, 0.6);
+            width: 288px;
+            height: 162px;
             color: #ffffff;
-            opacity: 0.8;
             z-index: 1;
         }
 
         .el-image {
+            width: 288px;
+            height: 162px;
             z-index: 2;
 
             img {
@@ -225,19 +219,8 @@ onMounted(async () => {
 
         .mask:hover {
             z-index: 3;
+            background: rgba(148, 144, 144, 0.6);
         }
     }
-
-    .block:last-child {
-        margin-right: 0px;
-    }
-
-    .demonstration {
-        display: block;
-        color: var(--el-text-color-secondary);
-        font-size: 14px;
-        margin-bottom: 20px;
-    }
-
 }
 </style>

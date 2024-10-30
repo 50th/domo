@@ -6,11 +6,10 @@ from datetime import datetime
 from pathlib import Path
 
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.db.models import Q
+from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.http import Http404, FileResponse
 from rest_framework import mixins
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.viewsets import GenericViewSet
@@ -19,15 +18,15 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from app_wallpaper.models import Wallpaper
 from app_wallpaper.serializers import WallpaperSerializer
 from constants.reponse_codes import ResponseCode
+from utils.common_funcs import generate_md5
 from utils.image_manager import ImageFile
 
 logger = logging.getLogger(__name__)
 
 
-def create_image_path(img_name: str):
+def create_image_path(img_name: str) -> Path:
     """
     创建文件保存路径
-
     :param img_name: 文件名
     """
     image_dir = settings.WALLPAPER_APP.get('SAVE_DIR') / datetime.now().strftime('%Y-%m-%d')
@@ -42,27 +41,36 @@ def create_image_path(img_name: str):
 @permission_classes([AllowAny])
 def upload_wallpaper(request):
     """壁纸上传"""
-    image = request.FILES.get('wallpaper')
+    image = request.FILES.get('wallpaper')  # type: TemporaryUploadedFile | InMemoryUploadedFile
     if not image:
         return Response(ResponseCode.PARAM_MISSING)
     if image.size > settings.WALLPAPER_APP.get('MAX_SIZE'):
         return Response(ResponseCode.WALLPAPER_TOO_LARGE)
-    with ImageFile(image) as img:
-        if img.is_image():
-            img_id = uuid.uuid4().hex
-            img_name = f'{img_id}.jpg'
-            img_path = create_image_path(img_name)
-            img.convert_image_format(img_path)
-            user = request.user if request.user and request.user.is_authenticated else None
-            Wallpaper.objects.create(id=img_id, image_name=img_name, image_size=image.size, image_path=img_path,
-                                     image_width=img.width, image_height=img.height, upload_user=user)
-            # 保存缩略图
-            if not settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').exists():
-                settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').mkdir(parents=True)
-            img.save_thumb(settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / img_name)
-            return Response(ResponseCode.OK)
-        else:
-            return Response(ResponseCode.PARAM_ERROR)
+    try:
+        with ImageFile(image) as img:
+            if img.is_image():
+                img_id = uuid.uuid4().hex
+                img_name = f'{img_id}.jpg'
+                img_path = create_image_path(img_name)
+                img.convert_image_format(img_path)
+                # 计算原图片的 md5 值
+                image.seek(0)
+                img_hash = generate_md5(image)
+                print(img_hash)
+                user = request.user if request.user and request.user.is_authenticated else None
+                Wallpaper.objects.create(id=img_id, image_name=img_name, image_size=img_path.stat().st_size,
+                                         image_path=img_path, image_width=img.width, image_height=img.height,
+                                         upload_user=user)
+                # 保存缩略图
+                if not settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').exists():
+                    settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').mkdir(parents=True)
+                img.save_thumb(settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / img_name)
+                return Response(ResponseCode.OK)
+            else:
+                return Response(ResponseCode.PARAM_ERROR)
+    except Exception as e:
+        logger.error('upload_wallpaper error: %s', e)
+        return Response(ResponseCode.SERVER_EXCEPTION)
 
 
 @api_view(['GET'])
@@ -100,20 +108,15 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
                        mixins.DestroyModelMixin,
                        mixins.ListModelMixin,
                        GenericViewSet):
-    queryset = Wallpaper.objects.all()
+    queryset = Wallpaper.objects.all().order_by('-upload_time')
     serializer_class = WallpaperSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = []
 
-    def get_queryset(self):
-        queryset = self.queryset
-        user = self.request.user  # type: User
-        if user and user.is_authenticated:
-            if not user.is_superuser:
-                queryset = queryset.filter(Q(upload_user=None) | Q(upload_user=user))
-        else:
-            queryset = queryset.filter(upload_user=None)
-        return queryset.order_by('-upload_time')
+    def get_permissions(self):
+        if self.action == 'destroy':
+            self.permission_classes = [IsAdminUser]
+        return [permission() for permission in self.permission_classes]
 
     def retrieve(self, request, *args, **kwargs):
         try:

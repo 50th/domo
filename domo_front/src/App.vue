@@ -17,7 +17,7 @@
           </el-icon>
           <span>文件</span>
         </el-menu-item>
-        <el-menu-item v-if="userInfo && userInfo.is_superuser" index="/wallpapers">
+        <el-menu-item index="/wallpapers">
           <el-icon>
             <Picture />
           </el-icon>

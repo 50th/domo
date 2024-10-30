@@ -64,7 +64,8 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/UserLogin.vue')
-    }
+    },
+    { path: '/:pathMatch(.*)*', name: 'NotFound', component: () => import('@/views/NotFound.vue') }
   ]
 })
 
@@ -81,6 +82,9 @@ router.beforeEach((to, from) => {
 
   if (to.name === 'login' && user) {
     return from
+  }
+  if (!user && (to.name === 'videoList' || to.name === 'playVideo' || to.name === 'tool')) {
+    return { name: 'home' }
   }
 })
 

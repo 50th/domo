@@ -24,24 +24,26 @@ class ImageFile(object):
 
     def convert_image_format(self, output_path: Union[str, Path]):
         """
-        Convert image to a different format.
-
-        :param output_path: The path to save the converted image.
+        转换图片格式
+        :param output_path: 转换后保存路径
         """
         try:
-            self.img.save(output_path, 'JPEG', quality=100, subsampling=0)  # 尽量保证图片质量不下降
+            self.img.save(output_path, 'JPEG')
             logger.info('ImageFile convert_image_format image saved to %s', output_path)
         except Exception as e:
             logger.error('ImageFile convert_image_format error: %s', e)
 
-    def save_thumb(self, thumb_img_path: Union[str, Path]):
+    def save_thumb(self, thumb_img_path: Union[str, Path], ratio: float = None):
         """
         保存缩略图
-
         :param thumb_img_path: 保存路径
+        :param ratio: 缩放比例
         :return:
         """
-        thumb_img = self.img.resize((480, 270))
+        if ratio is None:
+            # 计算缩放比例
+            ratio = min(320 / self.width, 180 / self.height)
+        thumb_img = self.img.resize((int(self.width * ratio), int(self.height * ratio)))
         thumb_img.save(thumb_img_path)
 
     def __enter__(self):
