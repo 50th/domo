@@ -1,14 +1,14 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="5">
-            <el-input v-model="searchVal" size="default" placeholder="搜索(文件名)" clearable @change="refreshFileList" />
+        <el-col :span="4" :offset="4">
+            <el-input v-model="searchVal" placeholder="搜索(文件名)" clearable @change="refreshFileList" />
         </el-col>
         <el-col :span="1">
             <el-upload style="display: inline; margin-left: 12px;" v-loading.fullscreen.lock="fullscreenLoading"
                 :show-file-list="false" :action="`${baseUrl}/api-file/files/`"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="file_path"
                 :on-progress="openLoading" :on-success="afterUploadFile" :on-error="fileUploadError">
-                <el-button color="#626aef" size="default" type="primary" text plain round>上传文件</el-button>
+                <el-button color="#626aef" type="primary" text plain round>上传文件</el-button>
             </el-upload>
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
@@ -16,21 +16,22 @@
         </el-col>
     </el-row>
     <el-row>
-        <el-col :span="14" :offset="5">
-            <el-table :data="fileList" size="default" stripe @sort-change="handleSortChange">
+        <el-col :span="16" :offset="4">
+            <el-table :data="fileList" size="default" stripe @sort-change="handleSortChange" style="font-size: 16px;">
                 <el-table-column sortable="custom" prop="filename" label="文件名"></el-table-column>
                 <el-table-column prop="file_type" label="文件类型" width="300" />
-                <el-table-column sortable="custom" prop="file_size" :formatter="parseFileSize" label="文件大小" width="110" />
-                <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="160" />
-                <el-table-column prop="download_count" label="下载次数" align="center" width="80" />
+                <el-table-column sortable="custom" prop="file_size" :formatter="parseFileSize" label="文件大小"
+                    width="120" />
+                <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="180" />
+                <el-table-column prop="download_count" label="下载次数" align="center" width="100" />
                 <el-table-column width="130">
                     <template #default="scope">
                         <div v-show="!scope.row.downloading">
                             <el-button type="success" text plain @click="downloadFileHandler(scope.row)">下载</el-button>
-                            <el-button type="danger" text plain @click="delFile(scope.row.id, scope.row.filename)">删除</el-button>
+                            <el-button type="danger" text plain
+                                @click="delFile(scope.row.id, scope.row.filename)">删除</el-button>
                         </div>
                         <div v-show="scope.row.downloading">
-                            <!-- <el-progress :percentage="scope.row.downloadingProgress" /> -->
                             <el-progress :text-inside="true" :stroke-width="18"
                                 :percentage="scope.row.downloadingProgress" />
                         </div>
@@ -40,7 +41,7 @@
         </el-col>
     </el-row>
     <el-row style="margin-top: 20px;">
-        <el-col :span="14" :offset="5">
+        <el-col :span="16" :offset="4">
             <el-pagination style="justify-content: center" layout="prev, pager, next" :page-size="pageSize"
                 :pager-count="5" :total="fileCount" @current-change="handleCurrentChange" />
         </el-col>
