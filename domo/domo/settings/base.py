@@ -213,7 +213,7 @@ LOGGING = {
         },
         # 简单
         'simple': {
-            'format': '[%(levelname)s][%(asctime)s][%(filename)s][%(lineno)d] %(message)s',
+            'format': '%(asctime)s %(levelname)s %(name)s %(process)d %(thread)d %(message)s',
         },
     },
     'handlers': {

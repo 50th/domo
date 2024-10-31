@@ -24,6 +24,7 @@ class ResponseCode(Enum):
 
     WALLPAPER_TOO_LARGE = (4000, '壁纸过大')
     WALLPAPER_NOT_EXIST = (4001, '壁纸不存在')
+    WALLPAPER_EXIST = (4002, '壁纸已存在')
 
     VIDEO_FILE_CORRUPTED = (5000, '视频文件损坏')
     VIDEO_SAVE_FIELD = (5001, '视频保存失败')

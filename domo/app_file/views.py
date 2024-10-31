@@ -107,7 +107,6 @@ class FileViewSet(mixins.CreateModelMixin,
                         'Content-Type': 'application/octet-stream',
                         'Content-Disposition': f'attachment; filename={urllib.parse.quote(instance.filename)}'
                     }
-                    logger.info('response headers: %s', headers)
                     response = Response(status=200, headers=headers, content_type='application/octet-stream')
                 download_log = FileDownloadLog.objects.create(
                     file=instance,

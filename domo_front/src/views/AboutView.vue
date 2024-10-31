@@ -10,10 +10,6 @@
 <script setup lang="ts">
 </script>
 <style scoped>
-.el-card {
-    opacity: 0.8;
-}
-
 .home-box {
     h1 {
         font-size: 3rem;
@@ -35,22 +31,5 @@
     justify-content: center;
     min-height: 2rem;
     /* box-shadow: 0px 0px 12px rgba(117, 122, 131, 0.20); */
-}
-
-.top-box {
-    font-size: 1.2rem;
-    /* font-family: "FangSong"; */
-
-    ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-
-        li {
-            /* color: #6b531e; */
-            min-height: 2rem;
-        }
-    }
-
 }
 </style>

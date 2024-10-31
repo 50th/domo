@@ -38,7 +38,7 @@ class CustomRenderer(JSONRenderer):
                     res_data = data
                 if response.status_code == status.HTTP_401_UNAUTHORIZED:
                     response.status_code = status.HTTP_200_OK
-                    code, msg = ResponseCode.LOGIN_REQUIRED.value
+                    code, msg = ResponseCode.LOGIN_EXPIRED.value
                 elif response.status_code == status.HTTP_400_BAD_REQUEST:
                     response.status_code = status.HTTP_200_OK
                     code, msg = ResponseCode.PARAM_ERROR.value

@@ -49,20 +49,26 @@ def save_article_file(title: str, content: str, file_dir: Path) -> Path:
     return file_path
 
 
-def check_file_type(file: TemporaryUploadedFile = None):
+def check_file_type(file: TemporaryUploadedFile = None) -> str:
+    """
+    使用 Magika 检查文件类型
+    :param file:
+    :return:
+    """
     m = Magika()
     res = m.identify_bytes(file.read())
     logger.info('%s file type: %s',  file.name, res.output)
     return f'{res.output.ct_label}: {res.output.description}'
 
 
-def generate_md5(content) -> str:
+def generate_file_md5(content, chunk_size: int = 512 * 1024) -> str:
     """
-    生成 md5 值
-    :param content:
-    :return:
+    计算文件的 md5 值
+    :param content: 文件内容
+    :param chunk_size: 分块大小
+    :return: md5 值
     """
     md5_hash = hashlib.md5()
-    while chunk := content.read(512 * 1024):
-        md5_hash.update(chunk)  # 更新 MD5 值
+    while chunk := content.read(chunk_size):
+        md5_hash.update(chunk)
     return md5_hash.hexdigest()

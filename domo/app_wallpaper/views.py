@@ -7,6 +7,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
+from django.db.models import Q
 from django.http import Http404, FileResponse
 from rest_framework import mixins
 from rest_framework.permissions import AllowAny, IsAdminUser
@@ -18,7 +19,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from app_wallpaper.models import Wallpaper
 from app_wallpaper.serializers import WallpaperSerializer
 from constants.reponse_codes import ResponseCode
-from utils.common_funcs import generate_md5
+from utils.common_funcs import generate_file_md5
 from utils.image_manager import ImageFile
 
 logger = logging.getLogger(__name__)
@@ -53,19 +54,25 @@ def upload_wallpaper(request):
                 img_name = f'{img_id}.jpg'
                 img_path = create_image_path(img_name)
                 img.convert_image_format(img_path)
-                # 计算原图片的 md5 值
+                # 计算图片的 md5 值，检查图片是否已经存在
                 image.seek(0)
-                img_hash = generate_md5(image)
-                print(img_hash)
-                user = request.user if request.user and request.user.is_authenticated else None
-                Wallpaper.objects.create(id=img_id, image_name=img_name, image_size=img_path.stat().st_size,
-                                         image_path=img_path, image_width=img.width, image_height=img.height,
-                                         upload_user=user)
-                # 保存缩略图
-                if not settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').exists():
-                    settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').mkdir(parents=True)
-                img.save_thumb(settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / img_name)
-                return Response(ResponseCode.OK)
+                source_img_hash = generate_file_md5(image)
+                exist_wallpaper = Wallpaper.objects.filter(Q(source_image_hash=source_img_hash)
+                                                           | Q(image_hash=source_img_hash))
+                if exist_wallpaper:
+                    return Response(ResponseCode.WALLPAPER_EXIST)
+                else:
+                    with open(img_path, 'rb') as f:
+                        img_hash = generate_file_md5(f)
+                    user = request.user if request.user and request.user.is_authenticated else None
+                    Wallpaper.objects.create(id=img_id, image_name=img_name, image_size=img_path.stat().st_size,
+                                             image_path=img_path, image_width=img.width, image_height=img.height,
+                                             source_image_hash=source_img_hash, image_hash=img_hash, upload_user=user)
+                    # 保存缩略图
+                    if not settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').exists():
+                        settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').mkdir(parents=True)
+                    img.save_thumb(settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / img_name)
+                    return Response(ResponseCode.OK)
             else:
                 return Response(ResponseCode.PARAM_ERROR)
     except Exception as e:
@@ -95,7 +102,6 @@ def wallpaper_thumb(request, wallpaper_id: str):
                     'Content-Type': 'application/octet-stream',
                     'Content-Disposition': f'attachment; filename={urllib.parse.quote(wallpaper.image_name)}'
                 }
-                logger.info('response headers: %s', headers)
                 response = Response(status=200, headers=headers, content_type='application/octet-stream')
             return response
         else:

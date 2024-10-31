@@ -1,6 +1,14 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordName } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { checkAccessApi } from '@/apis/authApis'
+
+const NeedLoginRoutes: RouteRecordName[] = [
+  'editArticle',
+  'addArticle',
+  'tool',
+  'videoList',
+  'playVideo'
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,21 +77,27 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   let user = useUserStore().getUser()
   if (user) {
-    checkAccessApi(user.access).then((res) => {
-      if (res.code == 1005) {
+    await checkAccessApi(user.access)
+      .then((res) => {
+        if (res.code === 1003 || res.code === 1005) {
+          useUserStore().setUser(null)
+          user = null
+        }
+      })
+      .catch((err) => {
         useUserStore().setUser(null)
         user = null
-      }
-    })
+      })
   }
 
   if (to.name === 'login' && user) {
-    return from
+    return { name: 'home' }
   }
-  if (!user && (to.name === 'videoList' || to.name === 'playVideo' || to.name === 'tool')) {
+
+  if (!user && to.name && NeedLoginRoutes.includes(to.name as RouteRecordName)) {
     return { name: 'home' }
   }
 })
