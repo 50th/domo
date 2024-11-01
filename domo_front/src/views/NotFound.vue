@@ -9,7 +9,7 @@
     <el-row>
         <el-col :span="24" style="text-align: center;">
             <div>
-                <router-link :to="{ name: 'home' }">返回首页</router-link>
+                <RouterLink style="text-decoration: none;" :to="{ name: 'home' }">返回首页</RouterLink>
             </div>
         </el-col>
     </el-row>

@@ -4,7 +4,10 @@
             <el-input v-model="searchVal" size="default" placeholder="搜索(文件名)" clearable
                 @change="refreshWallpaperList" />
         </el-col>
-        <el-col :span="1">
+        <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
+            <span>壁纸总数：{{ wallpaperCount }}</span>
+        </el-col>
+        <el-col :span="1" v-if="userInfo">
             <el-upload style="display: inline; margin-left: 12px;" v-loading.fullscreen.lock="fullscreenLoading"
                 :show-file-list="false" :action="`${baseUrl}/api-wallpaper/upload-wallpaper/`"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="wallpaper"
@@ -13,9 +16,6 @@
                     <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
                 </el-tooltip>
             </el-upload>
-        </el-col>
-        <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
-            <span>壁纸总数：{{ wallpaperCount }}</span>
         </el-col>
     </el-row>
     <el-row style="margin-top: 10px;">
@@ -49,7 +49,6 @@
         </el-col>
     </el-row>
 </template>
-
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
@@ -67,7 +66,7 @@ const wallpaperList = ref<WallpaperInfo[]>([]);
 const wallpaperCount = ref<number>(0);
 const fullscreenLoading = ref(false);
 let currentPage = 1;
-const pageSize = ref<number>(10);
+const pageSize = ref<number>(18);
 const searchVal = ref<string>();
 const ordering = ref<string>();
 const showViewerList = ref<boolean[]>([]);
@@ -181,7 +180,6 @@ onMounted(async () => {
     refreshWallpaperList();
 })
 </script>
-
 <style>
 .demo-image {
     .block {
@@ -197,6 +195,7 @@ onMounted(async () => {
             height: 162px;
             color: #ffffff;
             z-index: 1;
+            opacity: 0;
         }
 
         .el-image {
@@ -220,6 +219,8 @@ onMounted(async () => {
         .mask:hover {
             z-index: 3;
             background: rgba(148, 144, 144, 0.6);
+            display: block;
+            opacity: 1;
         }
     }
 }

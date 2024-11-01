@@ -28,6 +28,9 @@ class ImageFile(object):
         :param output_path: 转换后保存路径
         """
         try:
+            # jpeg 只能保存 RGB 的图片
+            if self.img.mode == 'RGBA':
+                self.img = self.img.convert('RGB')
             self.img.save(output_path, 'JPEG')
             logger.info('ImageFile convert_image_format image saved to %s', output_path)
         except Exception as e:

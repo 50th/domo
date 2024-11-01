@@ -259,15 +259,15 @@ DEV = False
 # 文章相关配置
 ARTICLE_APP = {
     'IMG_EXTENSIONS': ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'),  # 上传图片限制
-    'MAX_IMAGE_SIZE': 1024 * 1024 * 1,
+    'MAX_IMAGE_SIZE': 1024 * 1024 * 10,
     'IMG_SAVE_DIR': Path('static/article_app/img'),
     'MD_FILE_SAVE_DIR': Path('static/article_app'),
-    'MD_FILE_MAX_SIZE': 1024 * 1024 * 5,
+    'MD_FILE_MAX_SIZE': 1024 * 1024 * 20,
 }
 
 # 文件相关配置
 FILE_APP = {
-    'MAX_FILE_SIZE': 1024 * 1024 * 5,
+    'MAX_FILE_SIZE': 1024 * 1024 * 50,
     'FILE_SAVE_DIR': Path('static/file_app'),
 }
 
@@ -277,7 +277,7 @@ VIDEO_APP = {
 
 # 壁纸相关配置
 WALLPAPER_APP = {
-    'MAX_SIZE': 1024 * 1024 * 5,
+    'MAX_SIZE': 1024 * 1024 * 30,
     'SAVE_DIR': Path('static/wallpaper_app'),
     'THUMB_SAVE_DIR': Path('static/wallpaper_app/thumb'),
 }

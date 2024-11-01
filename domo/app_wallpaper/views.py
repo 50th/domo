@@ -10,7 +10,7 @@ from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUpload
 from django.db.models import Q
 from django.http import Http404, FileResponse
 from rest_framework import mixins
-from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.viewsets import GenericViewSet
@@ -39,7 +39,7 @@ def create_image_path(img_name: str) -> Path:
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 def upload_wallpaper(request):
     """壁纸上传"""
     image = request.FILES.get('wallpaper')  # type: TemporaryUploadedFile | InMemoryUploadedFile
@@ -48,20 +48,19 @@ def upload_wallpaper(request):
     if image.size > settings.WALLPAPER_APP.get('MAX_SIZE'):
         return Response(ResponseCode.WALLPAPER_TOO_LARGE)
     try:
-        with ImageFile(image) as img:
-            if img.is_image():
-                img_id = uuid.uuid4().hex
-                img_name = f'{img_id}.jpg'
-                img_path = create_image_path(img_name)
-                img.convert_image_format(img_path)
-                # 计算图片的 md5 值，检查图片是否已经存在
-                image.seek(0)
-                source_img_hash = generate_file_md5(image)
-                exist_wallpaper = Wallpaper.objects.filter(Q(source_image_hash=source_img_hash)
-                                                           | Q(image_hash=source_img_hash))
-                if exist_wallpaper:
-                    return Response(ResponseCode.WALLPAPER_EXIST)
-                else:
+        # 计算图片的 md5 值，检查图片是否已经存在
+        source_img_hash = generate_file_md5(image)
+        exist_wallpaper = Wallpaper.objects.filter(Q(source_image_hash=source_img_hash) | Q(image_hash=source_img_hash))
+        if exist_wallpaper:
+            return Response(ResponseCode.WALLPAPER_EXIST)
+        else:
+            image.seek(0)
+            with ImageFile(image) as img:
+                if img.is_image():
+                    img_id = uuid.uuid4().hex
+                    img_name = f'{img_id}.jpg'
+                    img_path = create_image_path(img_name)
+                    img.convert_image_format(img_path)
                     with open(img_path, 'rb') as f:
                         img_hash = generate_file_md5(f)
                     user = request.user if request.user and request.user.is_authenticated else None
@@ -73,8 +72,8 @@ def upload_wallpaper(request):
                         settings.WALLPAPER_APP.get('THUMB_SAVE_DIR').mkdir(parents=True)
                     img.save_thumb(settings.WALLPAPER_APP.get('THUMB_SAVE_DIR') / img_name)
                     return Response(ResponseCode.OK)
-            else:
-                return Response(ResponseCode.PARAM_ERROR)
+                else:
+                    return Response(ResponseCode.PARAM_ERROR)
     except Exception as e:
         logger.error('upload_wallpaper error: %s', e)
         return Response(ResponseCode.SERVER_EXCEPTION)
