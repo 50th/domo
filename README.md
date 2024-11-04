@@ -35,11 +35,13 @@
     - 登录用户文件可以删除自己的文件
     - 管理员可以删除所有文件
   - [x] 文件下载记录
-- [ ] 壁纸
+- [x] 壁纸
   - [x] 上传壁纸
     - 转为 JPG 格式保存
     - 保存缩略图
-  - [ ] 壁纸展示
+  - [x] 壁纸展示
+    - 缩略图
+    - 大图预览
   - [x] 删除壁纸
   - [x] 下载壁纸
 - [ ] 视频
@@ -61,6 +63,8 @@
    - `python manage.py makemigrations -settings=domo.settings.dev`
    - `python manage.py migrate -settings=domo.settings.dev`
 6. 启动：`python manage.py runserver -settings=domo.settings.dev`
+
+注意：**由于 django 的 StatReloader 会加载 settings 打开日志文件，导致在 windows 下日志滚动时无法移动日志文件，但部署是在 linux 中，不会有影响**
 
 ### 前端
 
