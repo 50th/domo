@@ -44,7 +44,7 @@ class ImageFile(object):
         :return:
         """
         if ratio is None:
-            # 计算缩放比例
+            # 计算缩放比例，限制最大宽高，保持宽高比例
             ratio = min(320 / self.width, 180 / self.height)
         thumb_img = self.img.resize((int(self.width * ratio), int(self.height * ratio)))
         thumb_img.save(thumb_img_path)

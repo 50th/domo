@@ -81,6 +81,7 @@
 
 ## 部署
 
-1. 创建 domo 目录
-2. 将`domo_x.x.x.zip`上传到 domo 目录下并解压：`unzip -o domo_x.x.x.zip`
-3. 执行`bash install.sh`脚本部署服务
+1. 准备好 docker 环境
+2. 创建 domo 目录
+3. 将`domo_x.x.x.zip`上传到 domo 目录下并解压：`unzip -o domo_x.x.x.zip`
+4. 执行`bash install.sh`脚本部署服务

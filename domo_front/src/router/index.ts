@@ -50,7 +50,7 @@ const router = createRouter({
     },
     {
       path: '/wallpapers',
-      name: 'wallpaper',
+      name: 'wallpaperList',
       component: () => import('@/views/WallpaperView.vue')
     },
     {

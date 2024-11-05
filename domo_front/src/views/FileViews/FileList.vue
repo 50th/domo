@@ -1,7 +1,7 @@
 <template>
     <el-row>
         <el-col :span="4" :offset="4">
-            <el-input v-model="searchVal" placeholder="搜索(文件名)" clearable @change="refreshFileList" />
+            <el-input v-model="searchVal" placeholder="搜索(文件名)" clearable size="default" @change="refreshFileList" />
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
             <span>文件总数：{{ fileCount }}</span>
@@ -11,7 +11,7 @@
                 :show-file-list="false" :action="`${baseUrl}/api-file/files/`"
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="file_path"
                 :on-progress="openLoading" :on-success="afterUploadFile" :on-error="fileUploadError">
-                <el-button color="#626aef" type="primary" text plain round>上传文件</el-button>
+                <el-button color="#626aef" type="primary" text plain round size="default">上传文件</el-button>
             </el-upload>
         </el-col>
     </el-row>

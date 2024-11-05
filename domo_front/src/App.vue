@@ -1,47 +1,51 @@
 <template>
   <el-container>
     <el-header>
-      <el-menu :ellipsis="false" mode="horizontal" :router="true" @select="handleSelect">
-        <el-menu-item index="/">
+      <el-menu :ellipsis="false" mode="horizontal" @select="handleSelect">
+        <el-menu-item index="home">
           <span style="font-weight: bold; color: #d95f5f">Domo</span>
         </el-menu-item>
-        <el-menu-item index="/articles">
+        <el-menu-item index="articleList">
           <el-icon>
             <Document />
           </el-icon>
           <span>文章</span>
         </el-menu-item>
-        <el-menu-item index="/files">
+        <el-menu-item index="fileList">
           <el-icon>
             <Files />
           </el-icon>
           <span>文件</span>
         </el-menu-item>
-        <el-menu-item index="/wallpapers">
+        <el-menu-item index="wallpaperList">
           <el-icon>
             <Picture />
           </el-icon>
           <span>壁纸</span>
         </el-menu-item>
-        <el-menu-item v-if="userInfo && userInfo.is_superuser" index="/videos">
+        <el-menu-item v-if="userInfo && userInfo.is_superuser" index="videoList">
           <el-icon>
             <Film />
           </el-icon>
           <span>视频</span>
         </el-menu-item>
-        <el-menu-item v-if="userInfo && userInfo.is_superuser" index="/tools">
+        <el-menu-item v-if="userInfo && userInfo.is_superuser" index="tool">
           <el-icon>
             <Brush />
           </el-icon>
           <span>工具</span>
         </el-menu-item>
-        <el-menu-item index="/about">
+        <el-menu-item index="about">
           <el-icon>
             <Sunrise />
           </el-icon>
           <span>关于</span>
         </el-menu-item>
         <div class="flex-grow" />
+        <!-- 第三方访问计数 -->
+        <!-- <el-menu-item>
+          <img src="https://count.getloli.com/@domo-app?theme=sketch-2" alt="domo-app" />
+        </el-menu-item> -->
         <el-menu-item v-if="!userInfo" index="/login">登录</el-menu-item>
         <el-menu-item v-else>
           <el-popconfirm title="确认登出吗？" confirm-button-text="确认" cancel-button-text="取消" @confirm="logout">
@@ -59,17 +63,21 @@
   <el-backtop :right="100" :bottom="100" />
 </template>
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { RouterView } from 'vue-router';
+import { onMounted, ref, watch } from 'vue';
+import { RouterView, useRouter } from 'vue-router';
 import { useUserStore } from './stores/user';
 import type { UserInfo } from '@/interfaces';
+import { sysInfoApi } from '@/apis/sysApis';
 
+const router = useRouter();
 const user = useUserStore();
 const userInfo = ref<UserInfo | null>(user.getUser());
+const sysVersion = ref<string | null>(null);
 
 const handleSelect = (key: string, keyPath: string[]) => {
-  // console.log(key, keyPath);
-  // console.log(userInfo);
+  console.log(key, keyPath);
+  console.log(userInfo);
+  router.push({ name: key });
 }
 
 const logout = (e: MouseEvent) => {
@@ -84,6 +92,14 @@ const logout = (e: MouseEvent) => {
 
 watch(user, async (newValue, oldValue) => {
   userInfo.value = user.getUser();
+})
+
+onMounted(() => {
+  sysInfoApi().then(res => {
+    if (res.code === 0) {
+      sysVersion.value = res.data.version;
+    }
+  })
 })
 
 </script>
