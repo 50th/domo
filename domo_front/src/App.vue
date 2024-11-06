@@ -67,12 +67,10 @@ import { onMounted, ref, watch } from 'vue';
 import { RouterView, useRouter } from 'vue-router';
 import { useUserStore } from './stores/user';
 import type { UserInfo } from '@/interfaces';
-import { sysInfoApi } from '@/apis/sysApis';
 
 const router = useRouter();
 const user = useUserStore();
 const userInfo = ref<UserInfo | null>(user.getUser());
-const sysVersion = ref<string | null>(null);
 
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath);
@@ -94,13 +92,7 @@ watch(user, async (newValue, oldValue) => {
   userInfo.value = user.getUser();
 })
 
-onMounted(() => {
-  sysInfoApi().then(res => {
-    if (res.code === 0) {
-      sysVersion.value = res.data.version;
-    }
-  })
-})
+onMounted(() => { })
 
 </script>
 <style>

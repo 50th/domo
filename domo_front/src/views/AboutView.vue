@@ -1,32 +1,61 @@
 <template>
-    <!-- <el-row>
-        <el-col :span="24" style="text-align: center;">
-            <div class="home-box">
-                <h1>Domo</h1>
-            </div>
-        </el-col>
-    </el-row> -->
     <el-row>
         <el-col style="text-align: center;">
-            <el-card style="max-width: 480px; margin: auto;" shadow="hover">
+            <el-card style="max-width: 550px; margin: auto;" shadow="hover">
                 <template #header>
                     <div class="home-box">
-                        <h1>Domo</h1>
+                        <span class="title">Domo</span>
+                        <span class="version">{{ sysVersion }}</span>
                     </div>
                 </template>
-                <img src="/src/assets/about.jpg" style="width: 100%" />
+                <img src="@/assets/about.jpg" style="width: 100%" />
+                <template #footer>
+                    <div class="home-box">
+                        <p>{{ hitokoto }}</p>
+                    </div>
+                </template>
             </el-card>
         </el-col>
     </el-row>
 </template>
 <script setup lang="ts">
+import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { sysInfoApi } from '@/apis/sysApis';
+
+const sysVersion = ref<string | null>(null);
+const hitokoto = ref<string>('人民万岁！');
+
+onMounted(() => {
+    sysInfoApi().then(res => {
+        if (res.code === 0) {
+            sysVersion.value = res.data.version;
+        }
+    })
+    axios.get('https://v1.hitokoto.cn').then(({ data }) => {
+        hitokoto.value = data.hitokoto;
+    }).catch(console.error)
+})
 </script>
 <style scoped>
 .home-box {
-    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
+    position: relative;
 
-    h1 {
-        font-size: 3rem;
+    .title {
+        font-size: 2.5rem;
+        margin: auto;
+
+    }
+
+    .version {
+        font-size: 1rem;
+        color: #999;
+        position: absolute;
+        right: 8rem;
+        bottom: 0.5rem;
+    }
+
+    p {
         margin: 0;
     }
 }

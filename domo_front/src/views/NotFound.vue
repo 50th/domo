@@ -51,6 +51,5 @@ onUnmounted(() => {
         text-decoration: none;
         color: #ec7728;
     }
-
 }
 </style>
