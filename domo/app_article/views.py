@@ -53,7 +53,7 @@ class ArticleImgView(APIView):
                     else:
                         img_save_dir = settings.ARTICLE_APP.get('IMG_SAVE_DIR')
                         name, suffix = img.name.rsplit('.', 1)
-                        img_name = f'article_img_{uuid.uuid4()}.{suffix}'
+                        img_name = f'article_img_{uuid.uuid4().hex}.{suffix}'
                         img_path = img_save_dir / img_name
                         # 保存图片
                         if not img_save_dir.exists():
@@ -63,9 +63,11 @@ class ArticleImgView(APIView):
                                 destination.write(chunk)
                         response = {
                             'name': img.name,
-                            'url': f'/{img_path}',
+                            'url': f'/static/article_app/img/{img_name}',
                             'title': name
                         }
+                        if settings.DEV:
+                            response['url'] = 'http://127.0.0.1:8000' + response['url']
                 else:
                     response = ResponseCode.MUST_BE_IMAGE
         else:

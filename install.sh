@@ -25,3 +25,4 @@ if [[ "$oldImageID" != "" ]]; then
     fi
 fi
 echo "success"
+rm -f install.sh

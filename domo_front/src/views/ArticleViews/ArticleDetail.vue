@@ -40,8 +40,8 @@
     <el-row v-if="articleInfo">
         <el-col :span="12" :offset="6">
             <el-card style="width: 100%; border-style: none;" shadow="never">
-                <MdPreview previewTheme="default" :codeStyleReverse="true" :editorId="mdPreviewID"
-                    :modelValue="articleInfo.content" :showCodeRowNumber="true" />
+                <MdPreview previewTheme="github" :editorId="mdPreviewID" :modelValue="articleInfo.content"
+                    :showCodeRowNumber="true" />
                 <template #footer>
                     <div class="article-footer">
                         <span>发布时间 {{ articleInfo.create_time }}</span>
@@ -122,17 +122,6 @@ onMounted(async () => {
 
 </script>
 <style>
-.md-editor-preview {
-    font-size: 1.2rem;
-
-    .code-block {
-        /* font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace; */
-        /* font: initial; */
-        /* font-size: 1rem; */
-    }
-
-}
-
 .article-header {
     min-width: 800px;
 

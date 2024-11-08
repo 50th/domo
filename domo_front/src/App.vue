@@ -46,7 +46,7 @@
         <!-- <el-menu-item>
           <img src="https://count.getloli.com/@domo-app?theme=sketch-2" alt="domo-app" />
         </el-menu-item> -->
-        <el-menu-item v-if="!userInfo" index="/login">登录</el-menu-item>
+        <el-menu-item v-if="!userInfo" index="login">登录</el-menu-item>
         <el-menu-item v-else>
           <el-popconfirm title="确认登出吗？" confirm-button-text="确认" cancel-button-text="取消" @confirm="logout">
             <template #reference>
