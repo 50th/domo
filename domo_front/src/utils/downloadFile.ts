@@ -1,23 +1,16 @@
-import type { AxiosResponse } from 'axios'
+import { downloadFile } from '@/apis/fileApis'
+import type { FileInfo, UserInfo } from '@/interfaces'
 
-export function downloadFile(res: AxiosResponse) {
-  let filename = ''
-  const disposition = res.headers['content-disposition']
-  const matches = disposition.match(/filename\*=([^;]+);*/)
-  if (matches != null && matches[1]) {
-    filename = decodeURIComponent(matches[1].split("'")[2])
-  } else {
-    const matches = disposition.match(/filename=([^;]+);*/)
-    if (matches != null && matches[1]) {
-      filename = matches[1].replace(/^"/, '').replace(/"$/, '')
-    }
-  }
-  const url = window.URL.createObjectURL(new Blob([res.data]))
-  const link = document.createElement('a')
-  link.style.display = 'none'
-  link.href = url
-  link.download = filename // 指定下载后的文件名，防跳转
-  document.body.appendChild(link)
-  link.click()
-  URL.revokeObjectURL(url)
+const updateProgressBar = (file: FileInfo, percentage: number) => {
+  file.downloading = true
+  // console.log(`Download progress: ${percentage}%`);
+  file.downloadingProgress = percentage
+}
+
+export const downloadFileHandler = (file: FileInfo, user: UserInfo | null) => {
+  downloadFile(file, user ? user.access : null, updateProgressBar).then((res) => {
+    file.downloading = false
+    file.downloadingProgress = 100
+    file.download_count += 1
+  })
 }

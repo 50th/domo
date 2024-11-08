@@ -15,8 +15,6 @@ docker load -i domo_app_"$version".tar
 echo "启动 docker 容器"
 docker-compose up -d
 docker-compose restart
-echo "清理环境"
-rm -f domo_app_"$version".tar dist.zip domo.zip
 echo "删除旧版本镜像"
 if [[ "$oldImageID" != "" ]]; then
     # 检查镜像是否被使用
@@ -24,5 +22,7 @@ if [[ "$oldImageID" != "" ]]; then
         docker rmi $oldImageID
     fi
 fi
-echo "success"
+echo "清理环境"
+rm -f domo_app_"$version".tar dist.zip domo.zip
 rm -f install.sh
+echo "安装完成"

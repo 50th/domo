@@ -143,7 +143,16 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'utils.custom_renderer.CustomRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        # 限制次数，未登录用户一分钟最多三次，登录用户最多一分钟十次
+        'anon': '20/s',  # 会去配置的 UserRateThrottle 以及 AnonRateThrottle 中找到属性 scope ，scope对应的就是生效的配置
+        'user': '50/s'
+    },
 }
 
 SIMPLE_JWT = {

@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-col :span="24" style="text-align: center;">
+        <el-col :span="24">
             <div class="home-box">
                 <h1>Domo</h1>
             </div>
@@ -18,7 +18,7 @@
                     <ul>
                         <li v-for="item in articleViewTopList" :key="item.id">
                             <span @click="router.push({ name: 'articleDetail', params: { id: item.id } })"
-                                style="float: left;cursor: pointer;">
+                                style="float: left; cursor: pointer;">
                                 {{ item.title }}
                             </span>
                             <span style="float: right;">{{ item.view_count }}</span>
@@ -37,8 +37,12 @@
                 <div class="top-box">
                     <ul>
                         <li v-for="item in fileDownloadTopList" :key="item.id">
-                            <span style="float: left;">{{ item.filename }}</span>
+                            <span style="float: left; cursor: pointer;" @click="downloadFileHandler(item, userInfo)">
+                                {{ item.filename }}
+                            </span>
                             <span style="float: right;">{{ item.download_count }}</span>
+                            <el-progress v-show="item.downloading" style="padding: 4px;" :text-inside="true"
+                                :stroke-width="15" :percentage="item.downloadingProgress" />
                         </li>
                     </ul>
                 </div>
@@ -50,20 +54,22 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
+import type { ArticleInfo, FileInfo, UserInfo } from '@/interfaces';
 import { getArticleViewTopApi } from '@/apis/articleApis';
 import { getFileDownloadTopApi } from '@/apis/fileApis';
-import type { ArticleInfo, FileInfo } from '@/interfaces';
+import { downloadFileHandler } from '@/utils/downloadFile';
+import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
-
+const user = useUserStore();
+const userInfo = ref<UserInfo | null>(user.getUser());
 const articleViewTopList = ref<ArticleInfo[]>([]);
+const fileDownloadTopList = ref<FileInfo[]>([]);
 
 const getArticleViewTopList = async () => {
     const res = await getArticleViewTopApi();
     articleViewTopList.value = res.data.top_view_articles;
 }
-
-const fileDownloadTopList = ref<FileInfo[]>([]);
 
 const getFileDownloadTopList = async () => {
     const res = await getFileDownloadTopApi();
@@ -81,31 +87,18 @@ onMounted(() => {
 }
 
 .home-box {
-    h1 {
-        font-size: 3rem;
-        /* color: rgb(218, 92, 223); */
-        letter-spacing: -3px;
-        text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
-        position: relative;
-        z-index: 3;
-        margin: 0;
-    }
+    text-align: center;
+    text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.6);
 
-    margin-top: 40px;
-    margin-bottom: 80px;
-    z-index: 1;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2rem;
-    /* box-shadow: 0px 0px 12px rgba(117, 122, 131, 0.20); */
+    h1 {
+        margin-top: 10px;
+        font-size: 3rem;
+        color: #7795f0;
+    }
 }
 
 .top-box {
     font-size: 1rem;
-    /* font-family: "FangSong"; */
 
     ul {
         list-style: none;
@@ -113,7 +106,6 @@ onMounted(() => {
         padding: 0;
 
         li {
-            /* color: #6b531e; */
             min-height: 2rem;
         }
     }

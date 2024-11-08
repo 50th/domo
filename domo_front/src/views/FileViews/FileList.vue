@@ -27,7 +27,8 @@
                 <el-table-column width="130">
                     <template #default="scope">
                         <div v-show="!scope.row.downloading">
-                            <el-button type="success" text plain @click="downloadFileHandler(scope.row)">下载</el-button>
+                            <el-button type="success" text plain
+                                @click="downloadFileHandler(scope.row, userInfo)">下载</el-button>
                             <el-button type="danger" text plain
                                 @click="delFile(scope.row.id, scope.row.filename)">删除</el-button>
                         </div>
@@ -52,10 +53,11 @@ import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import type { UploadFile, UploadFiles } from 'element-plus'
 
-import { getFileListApi, delFileApi, downloadFile } from '@/apis/fileApis'
+import type { FileInfo, UserInfo } from '@/interfaces'
+import { getFileListApi, delFileApi } from '@/apis/fileApis'
 import { useUserStore } from '@/stores/user'
 import { baseUrl } from '@/utils/baseUrl'
-import type { FileInfo, UserInfo } from '@/interfaces'
+import { downloadFileHandler } from '@/utils/downloadFile'
 
 const user = useUserStore();
 const userInfo = ref<UserInfo | null>(user.getUser());
@@ -80,20 +82,6 @@ const refreshFileList = () => {
             fileList.value = res.data.results;
             fileCount.value = res.data.count;
         }
-    });
-}
-
-const updateProgressBar = (file: FileInfo, percentage: number) => {
-    file.downloading = true;
-    // console.log(`Download progress: ${percentage}%`);
-    file.downloadingProgress = percentage;
-}
-
-const downloadFileHandler = (file: FileInfo) => {
-    downloadFile(file, userInfo.value ? userInfo.value.access : null, updateProgressBar).then(res => {
-        file.downloading = false;
-        file.downloadingProgress = 100;
-        file.download_count += 1;
     });
 }
 

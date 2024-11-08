@@ -57,3 +57,11 @@ export interface WallpaperInfo {
   upload_user: number
   upload_username: string
 }
+
+export interface Hitokoto {
+  id: string
+  hitokoto: string
+  from: string
+  from_who: string
+  uuid: string
+}

@@ -11,7 +11,7 @@
                 <img src="@/assets/about.jpg" style="width: 100%" />
                 <template #footer>
                     <div class="home-box">
-                        <p>{{ hitokoto }}</p>
+                        <p>{{ hitokoto.hitokoto }} -- {{ hitokoto.from }}</p>
                     </div>
                 </template>
             </el-card>
@@ -21,10 +21,13 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+
 import { sysInfoApi } from '@/apis/sysApis';
+import type { Hitokoto } from '@/interfaces';
 
 const sysVersion = ref<string | null>(null);
-const hitokoto = ref<string>('人民万岁！');
+const hitokoto = ref<Hitokoto>({ id: '', hitokoto: '人民万岁！', from: '毛泽东', from_who: '毛泽东', uuid: '' });
+
 
 onMounted(() => {
     sysInfoApi().then(res => {
@@ -32,8 +35,8 @@ onMounted(() => {
             sysVersion.value = res.data.version;
         }
     })
-    axios.get('https://v1.hitokoto.cn').then(({ data }) => {
-        hitokoto.value = data.hitokoto;
+    axios.get('https://v1.hitokoto.cn/').then(({ data }) => {
+        hitokoto.value = data;
     }).catch(console.error)
 })
 </script>
@@ -44,7 +47,6 @@ onMounted(() => {
     .title {
         font-size: 2.5rem;
         margin: auto;
-
     }
 
     .version {
