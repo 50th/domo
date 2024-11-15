@@ -88,3 +88,4 @@
 2. 创建 domo 目录
 3. 将`domo_x.x.x.zip`上传到 domo 目录下并解压：`unzip -o domo_x.x.x.zip`
 4. 执行`bash install.sh`脚本部署服务
+5. 第一次部署时，可以进入容器执行`python manage.py createsuperuser`创建用户

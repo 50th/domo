@@ -11,6 +11,8 @@ import portalocker
 def get_lock_filename(log_file: Path) -> Path:
     """
     定义日志文件锁名称，类似于 `.__file.lock`，其中file与日志文件baseFilename一致
+
+    :param log_file: 日志文件路径
     :return: 锁文件名称
     """
     # hide the file on Unix and generally from file completion
@@ -145,6 +147,7 @@ class ConcurrentTimedRotatingFileHandler(TimedRotatingFileHandler):
     def _do_write_record(self, dfn, record):
         """
         将日志内容写入指定文件
+
         :param dfn: 指定日志文件
         :param record: 日志内容
         """

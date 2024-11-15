@@ -53,6 +53,7 @@ class JsonHandleMiddleware:
 def is_excluded_endpoint(path: str, method: str) -> bool:
     """
     白名单校验
+
     :param path: 请求路径
     :param method: 请求方式
     :return: 是否在白名单中

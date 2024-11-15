@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 def generate_article(content: str) -> str:
     """
     根据文章内容生成文章摘要
+
     :param content: 文章内容
     """
     # 使用 sumy 库提取文章摘要信息
@@ -37,6 +38,7 @@ def generate_article(content: str) -> str:
 def save_article_file(title: str, content: str, file_dir: Path) -> Path:
     """
     将数据另外单独保存为文件
+
     :param title: 文章标题
     :param content: 文章内容
     :param file_dir: 保存目录
@@ -52,6 +54,7 @@ def save_article_file(title: str, content: str, file_dir: Path) -> Path:
 def check_file_type(file: TemporaryUploadedFile = None) -> str:
     """
     使用 Magika 检查文件类型
+
     :param file:
     :return:
     """
@@ -64,6 +67,7 @@ def check_file_type(file: TemporaryUploadedFile = None) -> str:
 def generate_file_md5(content, chunk_size: int = 512 * 1024) -> str:
     """
     计算文件的 md5 值
+
     :param content: 文件内容
     :param chunk_size: 分块大小
     :return: md5 值

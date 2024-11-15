@@ -98,7 +98,8 @@ onMounted(() => { })
 <style>
 @font-face {
   font-family: 'Harmony_Light';
-  src: url('@/assets/fonts/HarmonyOS_Sans_SC_Light.woff2') format('woff2');
+  src: url('https://cdn.jsdelivr.net/gh/50th/resources/HarmonyOS_Sans_SC_Light.woff2') format('woff2'),
+  url('@/assets/fonts/HarmonyOS_Sans_SC_Light.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }

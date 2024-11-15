@@ -25,6 +25,7 @@ class ImageFile(object):
     def convert_image_format(self, output_path: Union[str, Path]):
         """
         转换图片格式
+
         :param output_path: 转换后保存路径
         """
         try:
@@ -39,6 +40,7 @@ class ImageFile(object):
     def save_thumb(self, thumb_img_path: Union[str, Path], ratio: float = None):
         """
         保存缩略图
+
         :param thumb_img_path: 保存路径
         :param ratio: 缩放比例
         :return:

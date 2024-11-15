@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 def create_image_path(img_name: str) -> Path:
     """
     创建文件保存路径
+
     :param img_name: 文件名
     """
     image_dir = settings.WALLPAPER_APP.get('SAVE_DIR') / datetime.now().strftime('%Y-%m-%d')

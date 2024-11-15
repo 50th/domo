@@ -1,5 +1,14 @@
 #!/usr/bin/bash
 
+port=80
+container_id=$(docker ps -q -f "publish=$port" -f "name=domo_nginx")
+if [ "$container_id" == "" ];then
+    if lsof -i :$port | grep LISTEN >/dev/null
+    then
+        echo "$port 端口被占用"
+        exit 1
+    fi
+fi
 echo "解压程序文件"
 unzip -oq domo.zip
 version=`cat version.txt`
