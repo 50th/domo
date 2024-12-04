@@ -6,39 +6,21 @@
           <span style="font-weight: bold; color: #d95f5f">Domo</span>
         </el-menu-item>
         <el-menu-item index="articleList">
-          <el-icon>
-            <Document />
-          </el-icon>
           <span>文章</span>
         </el-menu-item>
         <el-menu-item index="fileList">
-          <el-icon>
-            <Files />
-          </el-icon>
           <span>文件</span>
         </el-menu-item>
         <el-menu-item index="wallpaperList">
-          <el-icon>
-            <Picture />
-          </el-icon>
           <span>壁纸</span>
         </el-menu-item>
         <el-menu-item v-if="userInfo && userInfo.is_superuser" index="videoList">
-          <el-icon>
-            <Film />
-          </el-icon>
           <span>视频</span>
         </el-menu-item>
         <el-menu-item v-if="userInfo && userInfo.is_superuser" index="tool">
-          <el-icon>
-            <Brush />
-          </el-icon>
           <span>工具</span>
         </el-menu-item>
         <el-menu-item index="about">
-          <el-icon>
-            <Sunrise />
-          </el-icon>
           <span>关于</span>
         </el-menu-item>
         <div class="flex-grow" />
@@ -99,7 +81,7 @@ onMounted(() => { })
 @font-face {
   font-family: 'Harmony_Light';
   src: url('https://cdn.jsdelivr.net/gh/50th/resources/HarmonyOS_Sans_SC_Light.woff2') format('woff2'),
-  url('@/assets/fonts/HarmonyOS_Sans_SC_Light.woff2') format('woff2');
+    url('@/assets/fonts/HarmonyOS_Sans_SC_Light.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
@@ -126,14 +108,17 @@ body {
 
 .el-header {
   padding: 0;
+  width: 50%;
+  margin: auto;
 
   .el-menu {
     /* --el-menu-text-color: #57d786; */
-    --el-menu-bg-color: #dff1ec94;
+    /* --el-menu-bg-color: #dff1ec94; */
     /* --el-menu-hover-text-color: #44bd70; */
     --el-menu-hover-bg-color: None;
     /* --el-menu-active-color: #44bd70; */
     /* padding: 0px !important; */
+    border-bottom: none;
 
     .flex-grow {
       flex-grow: 1;
@@ -141,7 +126,4 @@ body {
   }
 }
 
-/* .el-main {
-  opacity: 0.95;
-} */
 </style>

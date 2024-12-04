@@ -1,15 +1,8 @@
 <template>
-    <el-row v-if="articleInfo">
-        <el-col :span="24">
+    <!-- <el-row v-if="articleInfo">
+        <el-col :span="12" :offset="6">
             <el-page-header title="返回" @back="router.push({ name: 'articleList' });">
                 <template #content>
-                    <!-- <div class="article-header">
-                        <span class="article-title">{{ articleInfo.title }}</span>
-                        <span class="article-time">发布时间 {{ articleInfo.create_time }}</span>
-                        <span class="article-time">编辑时间 {{ articleInfo.last_edit_time }}</span>
-                        <span class="article-time">作者 {{ articleInfo.author_name }}</span>
-                    </div> -->
-
                     <div>
                         <span style="font-size: 1.3rem;">{{ articleInfo.title }}</span>
                     </div>
@@ -35,7 +28,7 @@
                 </template>
             </el-page-header>
         </el-col>
-    </el-row>
+    </el-row> -->
 
     <el-row v-if="articleInfo">
         <el-col :span="12" :offset="6">
@@ -47,6 +40,16 @@
                         <span>发布时间 {{ articleInfo.create_time }}</span>
                         <span style="margin-left: 2%;">编辑时间 {{ articleInfo.last_edit_time }}</span>
                         <span style="margin-left: 2%;">作者 {{ articleInfo.author_name }}</span>
+                        <el-button
+                            v-if="userInfo && (userInfo.id == articleInfo.author || (!articleInfo.author && userInfo.is_superuser))"
+                            style="margin-left: 12px;" size="default" type="success" plain text
+                            @click="router.push({ name: 'editArticle', params: { id: articleId } })">
+                            编辑文章
+                        </el-button>
+                        <el-button v-if="userInfo && (userInfo.is_superuser || userInfo.id == articleInfo.author)"
+                            size="default" type="danger" plain text @click="delArticle">
+                            删除文章
+                        </el-button>
                     </div>
                 </template>
             </el-card>
