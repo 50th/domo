@@ -1,28 +1,24 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="7">
-            <el-card shadow="never" style="border-style: none;" body-class="article-card">
-                <el-input v-model="searchVal" size="default" placeholder="搜索(标题和正文)" clearable
-                    @change="refreshArticleList" />
-            </el-card>
+        <el-col :span="3" :offset="6">
+            <el-input v-model="searchVal" size="default" placeholder="搜索(标题和正文)" clearable
+                @change="refreshArticleList" />
         </el-col>
         <el-col v-if="userInfo && userInfo.is_superuser" :span="3">
-            <el-card shadow="never" style="border-style: none;" body-class="article-card">
-                <el-button size="default" type="primary" plain round text @click="router.push({ name: 'addArticle' })">
-                    添加文章
-                </el-button>
-                <el-upload v-if="userInfo.is_superuser" style="display: inline; margin-left: 12px;"
-                    :show-file-list="false" :action="`${baseUrl}/api-article/article-file/`"
-                    :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="article_file"
-                    accept=".md" :on-success="afterUploadArticle">
-                    <el-button size="default" type="primary" text plain round>上传文章</el-button>
-                </el-upload>
-            </el-card>
+            <el-button size="default" type="primary" plain round text @click="router.push({ name: 'addArticle' })">
+                添加文章
+            </el-button>
+            <el-upload v-if="userInfo.is_superuser" style="display: inline; margin-left: 12px;" :show-file-list="false"
+                :action="`${baseUrl}/api-article/article-file/`"
+                :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="article_file"
+                accept=".md" :on-success="afterUploadArticle">
+                <el-button size="default" type="primary" text plain round>上传文章</el-button>
+            </el-upload>
         </el-col>
     </el-row>
 
     <el-row v-for="article in articleList" :key="article.id">
-        <el-col :span="10" :offset="7">
+        <el-col :span="12" :offset="6">
             <el-card shadow="never" style="border-style: none;" body-class="article-card"
                 @click="goArticleDetail(article.id)">
                 <span class="article-title">{{ article.title }}</span>
@@ -118,7 +114,7 @@ onMounted(async () => {
     /* width: 100%; */
 
     .article-title {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         cursor: pointer;
     }
 
@@ -127,7 +123,7 @@ onMounted(async () => {
         float: right;
         display: flex;
         align-items: center;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 }
 </style>

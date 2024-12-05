@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="5">
+        <el-col :span="3" :offset="6">
             <el-input v-model="searchVal" size="default" placeholder="搜索" clearable @change="refreshVideoList" />
         </el-col>
         <el-col :span="1">
@@ -15,11 +15,11 @@
             <span>视频总数：{{ videoCount }}</span>
         </el-col>
     </el-row>
-    <el-row>
-        <el-col :span="14" :offset="5">
-            <el-table :data="videoList" size="default" stripe @sort-change="handleSortChange">
+    <el-row style="margin-top: 15px;">
+        <el-col :span="12" :offset="6">
+            <el-table :data="videoList" size="default" @sort-change="handleSortChange">
                 <el-table-column sortable="custom" prop="video_name" label="视频名称"></el-table-column>
-                <el-table-column prop="video_type" label="视频类型" width="200" />
+                <!-- <el-table-column prop="video_type" label="视频类型" width="200" /> -->
                 <el-table-column prop="video_duration" :formatter="parseVideoDuration" label="视频时长" width="100" />
                 <el-table-column prop="video_res" label="视频分辨率" width="150" />
                 <el-table-column prop="video_bitrate" label="视频比特率" width="100" />

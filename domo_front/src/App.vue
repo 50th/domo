@@ -32,7 +32,7 @@
         <el-menu-item v-else>
           <el-popconfirm title="确认登出吗？" confirm-button-text="确认" cancel-button-text="取消" @confirm="logout">
             <template #reference>
-              <el-button text>{{ userInfo.username }}</el-button>
+              <span>{{ userInfo.username }}</span>
             </template>
           </el-popconfirm>
         </el-menu-item>

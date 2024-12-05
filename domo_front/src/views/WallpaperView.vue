@@ -1,8 +1,7 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="0">
-            <el-input v-model="searchVal" size="default" placeholder="搜索(文件名)" clearable
-                @change="refreshWallpaperList" />
+        <el-col :span="3" :offset="6">
+            <el-input v-model="searchVal" placeholder="搜索(文件名)" size="default" clearable @change="refreshWallpaperList" />
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
             <span>壁纸总数：{{ wallpaperCount }}</span>
@@ -13,12 +12,12 @@
                 :headers="userInfo ? { Authorization: `Bearer ${userInfo.access}` } : {}" name="wallpaper"
                 :on-progress="openLoading" :on-success="afterUploadWallpaper" :on-error="wallpaperUploadError">
                 <el-tooltip content="上传壁纸会统一转为 JPEG 格式" placement="top" effect="light">
-                    <el-button color="#626aef" size="default" type="primary" text plain round>上传壁纸</el-button>
+                    <el-button color="#626aef" type="primary" size="default" text plain round>上传壁纸</el-button>
                 </el-tooltip>
             </el-upload>
         </el-col>
     </el-row>
-    <el-row style="margin-top: 10px;">
+    <el-row style="margin-top: 15px;">
         <el-col :span="4" v-for="(wallpaper, index) in wallpaperList" :key="wallpaper.id" style="text-align: center;">
             <div class="demo-image">
                 <div class="block">

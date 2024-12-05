@@ -1,6 +1,6 @@
 <template>
     <el-row>
-        <el-col :span="4" :offset="6">
+        <el-col :span="3" :offset="6">
             <el-input v-model="searchVal" placeholder="搜索(文件名)" clearable size="default" @change="refreshFileList" />
         </el-col>
         <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
@@ -15,15 +15,15 @@
             </el-upload>
         </el-col>
     </el-row>
-    <el-row>
+    <el-row style="margin-top: 15px;">
         <el-col :span="12" :offset="6">
-            <el-table :data="fileList" size="default" stripe @sort-change="handleSortChange" style="font-size: 16px;">
+            <el-table :data="fileList" size="default" @sort-change="handleSortChange">
                 <el-table-column sortable="custom" prop="filename" label="文件名"></el-table-column>
-                <el-table-column prop="file_type" label="文件类型" width="300" />
+                <!-- <el-table-column prop="file_type" label="类型" width="170" /> -->
                 <el-table-column sortable="custom" prop="file_size" :formatter="parseFileSize" label="文件大小"
-                    width="120" />
-                <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="180" />
-                <el-table-column prop="download_count" label="下载次数" align="center" width="100" />
+                    align="right" width="120" />
+                <el-table-column sortable="custom" prop="upload_time" label="上传时间" width="180" align="center" />
+                <el-table-column prop="download_count" label="下载次数" align="center" width="90" />
                 <el-table-column width="130">
                     <template #default="scope">
                         <div v-show="!scope.row.downloading">
