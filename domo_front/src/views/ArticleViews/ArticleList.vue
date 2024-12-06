@@ -4,7 +4,7 @@
             <el-input v-model="searchVal" size="default" placeholder="搜索(标题和正文)" clearable
                 @change="refreshArticleList" />
         </el-col>
-        <el-col v-if="userInfo && userInfo.is_superuser" :span="3">
+        <el-col v-if="userInfo && userInfo.is_superuser" :span="3" :offset="1">
             <el-button size="default" type="primary" plain round text @click="router.push({ name: 'addArticle' })">
                 添加文章
             </el-button>
@@ -111,7 +111,6 @@ onMounted(async () => {
 
 .article-card {
     align-content: center;
-    /* width: 100%; */
 
     .article-title {
         font-size: 1.2rem;
@@ -119,7 +118,6 @@ onMounted(async () => {
     }
 
     .article-time {
-        /* height: 24px; */
         float: right;
         display: flex;
         align-items: center;

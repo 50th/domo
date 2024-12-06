@@ -3,6 +3,9 @@
         <el-col :span="3" :offset="6">
             <el-input v-model="searchVal" size="default" placeholder="搜索" clearable @change="refreshVideoList" />
         </el-col>
+        <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
+            <span>视频总数：{{ videoCount }}</span>
+        </el-col>
         <el-col :span="1">
             <el-upload style="display: inline; margin-left: 12px;" v-loading.fullscreen.lock="fullscreenLoading"
                 :show-file-list="false" :action="videoUploadApi"
@@ -10,9 +13,6 @@
                 :on-progress="openLoading" :on-success="afterUploadFile" :on-error="fileUploadError">
                 <el-button color="#626aef" size="default" type="primary" text plain round>上传视频</el-button>
             </el-upload>
-        </el-col>
-        <el-col :span="2" style="display:flex; align-items:center; justify-content: center;">
-            <span>视频总数：{{ videoCount }}</span>
         </el-col>
     </el-row>
     <el-row style="margin-top: 15px;">

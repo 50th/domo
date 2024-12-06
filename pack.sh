@@ -12,7 +12,7 @@ mv dist.zip ../
 cd ..
 # 删除 __pycache__ 文件夹
 # find . -path ./venv -prune -o -name '__pycache__' -type d -exec rm -r {} +
-# zip -qr domo_backend.zip app_article app_file app_user constants domo utils gunicorn_conf.py manage.py requirements_pro.txt
+# zip -qr domo_backend.zip app_article app_file app_user constants domo utils gunicorn.py manage.py requirements_pro.txt
 echo "构建后端 docker 镜像"
 cp -f version.txt domo/version.txt
 docker build -t domo_app:"$version" .
