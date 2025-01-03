@@ -15,7 +15,7 @@
                     </div>
                 </template>
                 <div class="top-box">
-                    <ul>
+                    <ul v-loading="topArticleLoading">
                         <li v-for="item in articleViewTopList" :key="item.id">
                             <span @click="router.push({ name: 'articleDetail', params: { id: item.id } })"
                                 style="float: left; cursor: pointer;">
@@ -35,7 +35,7 @@
                     </div>
                 </template>
                 <div class="top-box">
-                    <ul>
+                    <ul v-loading="topDownloadLoading">
                         <li v-for="item in fileDownloadTopList" :key="item.id">
                             <span style="float: left; cursor: pointer;" @click="downloadFileHandler(item, userInfo)">
                                 {{ item.filename }}
@@ -65,15 +65,19 @@ const user = useUserStore();
 const userInfo = ref<UserInfo | null>(user.getUser());
 const articleViewTopList = ref<ArticleInfo[]>([]);
 const fileDownloadTopList = ref<FileInfo[]>([]);
+const topArticleLoading = ref<boolean>(true);
+const topDownloadLoading = ref<boolean>(true);
 
 const getArticleViewTopList = async () => {
     const res = await getArticleViewTopApi();
     articleViewTopList.value = res.data.top_view_articles;
+    topArticleLoading.value = false;
 }
 
 const getFileDownloadTopList = async () => {
     const res = await getFileDownloadTopApi();
     fileDownloadTopList.value = res.data.top_download_files;
+    topDownloadLoading.value = false;
 }
 
 onMounted(() => {
@@ -104,6 +108,7 @@ onMounted(() => {
         list-style: none;
         margin: 0;
         padding: 0;
+        min-height: 80px;
 
         li {
             min-height: 2rem;

@@ -19,10 +19,9 @@
     </el-row>
 </template>
 <script setup lang="ts">
-import axios from 'axios';
 import { onMounted, ref } from 'vue';
 
-import { sysInfoApi } from '@/apis/sysApis';
+import { sysInfoApi, getHitokotoApi } from '@/apis/sysApis';
 import type { Hitokoto } from '@/interfaces';
 
 const sysVersion = ref<string | null>(null);
@@ -35,7 +34,7 @@ onMounted(() => {
             sysVersion.value = res.data.version;
         }
     })
-    axios.get('https://v1.hitokoto.cn/').then(({ data }) => {
+    getHitokotoApi().then(({ data }) => {
         hitokoto.value = data;
     }).catch(console.error)
 })

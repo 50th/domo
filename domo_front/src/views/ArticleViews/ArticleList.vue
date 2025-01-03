@@ -34,7 +34,10 @@
                 :pager-count="5" :total="articleCount" @current-change="handleCurrentChange" />
         </el-col>
     </el-row>
-    <el-empty v-else description="没有文章" />
+    <el-row v-else>
+        <el-empty description="没有文章" />
+    </el-row>
+
 
 </template>
 
