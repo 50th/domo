@@ -31,5 +31,16 @@ class ArticleActionType(TupleEnum):
     like = (1, '点赞')
 
 
+class ClipboardPrivacy(TupleEnum):
+    private = (0, '私有')
+    shared_no_pass = (1, '公开')
+    shared_pass = (2, '密码')
+
+
+class ClipboardContentType(TupleEnum):
+    text = (0, '文本')
+    file = (1, '文件')
+
+
 if __name__ == '__main__':
     print(ArticleStatus.to_tuple())
