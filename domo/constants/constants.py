@@ -42,5 +42,11 @@ class ClipboardContentType(TupleEnum):
     file = (1, '文件')
 
 
+class ClipboardSharePermission(TupleEnum):
+    read = (0, 'Read')
+    write = (1, 'Write'),
+    admin = (2, 'Admin')
+
+
 if __name__ == '__main__':
     print(ArticleStatus.to_tuple())
