@@ -37,16 +37,5 @@ class ClipboardPrivacy(TupleEnum):
     shared_pass = (2, '密码')
 
 
-class ClipboardContentType(TupleEnum):
-    text = (0, '文本')
-    file = (1, '文件')
-
-
-class ClipboardSharePermission(TupleEnum):
-    read = (0, 'Read')
-    write = (1, 'Write'),
-    admin = (2, 'Admin')
-
-
 if __name__ == '__main__':
     print(ArticleStatus.to_tuple())

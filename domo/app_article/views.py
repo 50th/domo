@@ -76,10 +76,11 @@ class ArticleImgView(APIView):
 
 
 class ArticleViewSet(viewsets.ModelViewSet):
-    queryset = Article.objects.all().order_by('-last_edit_time', '-create_time')
+    queryset = Article.objects.all()
     filter_backends = (filters.SearchFilter, filters.OrderingFilter,)
-    search_fields = ('title', 'content')  # 搜索字段
-    ordering_fields = ('last_edit_time', 'create_date',)
+    search_fields = ['title', 'content']  # 搜索字段
+    ordering_fields = ['last_edit_time', 'create_date',]
+    ordering = ['-last_edit_time', '-create_time']
     serializer_class = ArticleSerializer
     authentication_classes = [JWTAuthentication]  # 默认使用 jwt 认证
     permission_classes = [permissions.IsAdminUser]

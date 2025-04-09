@@ -26,4 +26,5 @@ urlpatterns = [
     path('api-file/', include('app_file.urls')),
     path('api-video/', include('app_video.urls')),
     path('api-wallpaper/', include('app_wallpaper.urls')),
+    path('api-clipboard/', include('app_network_clipboard.urls')),
 ]

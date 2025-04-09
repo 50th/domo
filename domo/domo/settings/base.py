@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'app_file.apps.AppFileConfig',
     'app_video.apps.AppVideoConfig',
     'app_wallpaper.apps.AppWallpaperConfig',
+    'app_network_clipboard.apps.AppNetworkClipboardConfig',
     'rest_framework',
 ]
 

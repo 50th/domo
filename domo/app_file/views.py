@@ -68,9 +68,10 @@ class FileViewSet(mixins.CreateModelMixin,
                   GenericViewSet):
     queryset = File.objects.all()
     filter_backends = [filters.SearchFilter, CaseInsensitiveOrderingFilter]
-    search_fields = ('filename',)  # 搜索字段
-    ordering_fields = ('upload_time', 'file_size', 'filename')
-    case_insensitive_ordering_fields = ('filename',)
+    search_fields = ['filename',]  # 搜索字段
+    ordering_fields = ['upload_time', 'file_size', 'filename']
+    ordering = ['-upload_time',]
+    case_insensitive_ordering_fields = ['filename',]  # 通过自定义排序类，实现排序字段对大小写不敏感
     serializer_class = FileSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = []
@@ -87,7 +88,7 @@ class FileViewSet(mixins.CreateModelMixin,
                 queryset = queryset.filter(Q(upload_user=None) | Q(upload_user=user))
         else:
             queryset = queryset.filter(upload_user=None)
-        return queryset.order_by('-upload_time')
+        return queryset
 
     def retrieve(self, request, *args, **kwargs):
         try:

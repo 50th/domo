@@ -9,7 +9,7 @@ from django.conf import settings
 from django.core.files.uploadedfile import TemporaryUploadedFile, InMemoryUploadedFile
 from django.db.models import Q
 from django.http import Http404, FileResponse
-from rest_framework import mixins
+from rest_framework import mixins, filters
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
@@ -114,8 +114,11 @@ class WallpaperViewSet(mixins.RetrieveModelMixin,
                        mixins.DestroyModelMixin,
                        mixins.ListModelMixin,
                        GenericViewSet):
-    queryset = Wallpaper.objects.all().order_by('-upload_time')
+    queryset = Wallpaper.objects.all()
     serializer_class = WallpaperSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['username', 'email', 'upload_time']
+    ordering = ['-upload_time']
     authentication_classes = [JWTAuthentication]
     permission_classes = []
 
