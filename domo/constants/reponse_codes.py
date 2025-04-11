@@ -28,3 +28,8 @@ class ResponseCode(Enum):
 
     VIDEO_FILE_CORRUPTED = (5000, '视频文件损坏')
     VIDEO_SAVE_FIELD = (5001, '视频保存失败')
+
+    # 剪切板
+    ONLY_SHARED = (6000, '非登录用户只能创建公开剪切板')
+    SHARED_PASSWORD_EMPTY = (6001, '当选择使用密码共享时，密码不能为空')
+    SHARED_PASSWORD_ERROR = (6002, '当选择使用密码共享时，密码长度不能小于6位')

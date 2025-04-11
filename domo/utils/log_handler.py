@@ -16,7 +16,7 @@ def get_lock_filename(log_file: Path) -> Path:
     :return: 锁文件名称
     """
     # hide the file on Unix and generally from file completion
-    lock_file = log_file.parent / f'.__{log_file.name.removesuffix(".log")}.lock'
+    lock_file = log_file.parent / f'.{log_file.name.removesuffix(".log")}.lock'
     return lock_file
 
 
