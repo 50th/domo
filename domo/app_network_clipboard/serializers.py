@@ -4,6 +4,16 @@ from app_network_clipboard.models import Clipboard
 from constants.constants import ClipboardPrivacy
 
 
+class ClipboardListSerializer(serializers.ModelSerializer):
+    created_username = serializers.ReadOnlyField(source='author.username', default='')
+    created_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', required=False, read_only=True)
+
+    class Meta:
+        model = Clipboard
+        fields = ['clipboard_id', 'name', 'privacy_type', 'created_username', 'created_time',]
+        read_only_fields = ['clipboard_id', 'created_user', 'created_time']
+
+
 class ClipboardSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=100, required=False, allow_blank=True)
     created_username = serializers.ReadOnlyField(source='created_user.username', default='')

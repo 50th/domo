@@ -1,22 +1,50 @@
+from django.contrib.auth.models import User
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import filters, status
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from app_network_clipboard.models import Clipboard
-from app_network_clipboard.serializers import ClipboardSerializer
+from app_network_clipboard.serializers import ClipboardSerializer, ClipboardListSerializer
 from constants.constants import ClipboardPrivacy
 from constants.reponse_codes import ResponseCode
 
 
 class ClipboardViewSet(ModelViewSet):
     queryset = Clipboard.objects.all()
-    serializer_class = ClipboardSerializer
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['created_time', 'name']
     ordering = ['-created_time']
     authentication_classes = [JWTAuthentication]
     permission_classes = []
+
+    def get_serializer_class(self):
+        # 列表和详情页使用不同的 serializer，返回不同的字段
+        if self.action == 'list':
+            return ClipboardListSerializer
+        return ClipboardSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        user = self.request.user  # type: User
+        if user and user.is_authenticated:
+            if not user.is_superuser:
+                queryset = queryset.filter(Q(created_user=None) | Q(created_user=user))
+        else:
+            queryset = queryset.filter(created_user=None)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
