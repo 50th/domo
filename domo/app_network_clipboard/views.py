@@ -59,17 +59,19 @@ class ClipboardViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         privacy_type = serializer.validated_data['privacy_type']
         password = serializer.validated_data.get('password')
+        if privacy_type not in ClipboardPrivacy.values():
+            return Response(ResponseCode.PARAM_ERROR)
         # 添加创建用户信息
         if request.user and request.user.is_authenticated:
             serializer.validated_data['created_user'] = request.user
         else:
-            serializer.validated_data['created_user'] = None
-            if serializer.validated_data['privacy_type'] != ClipboardPrivacy.shared_no_pass.value:
+            if serializer.validated_data['privacy_type'] == ClipboardPrivacy.private.value:
                 return Response(ResponseCode.ONLY_SHARED)
+            serializer.validated_data['created_user'] = None
         if privacy_type == ClipboardPrivacy.shared_pass.value:
             if password is None or not password.strip():
                 return Response(ResponseCode.SHARED_PASSWORD_EMPTY)
-            if len(password) < 6:
+            if len(password) < 4:
                 return Response(ResponseCode.SHARED_PASSWORD_ERROR)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)

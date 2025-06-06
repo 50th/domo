@@ -20,6 +20,10 @@ class TupleEnum(Enum):
     def to_tuple(cls):
         return tuple([(_.value, _.label, _.des) for _ in cls])
 
+    @classmethod
+    def values(cls):
+        return (_.value for _ in cls)
+
 
 class ArticleStatus(TupleEnum):
     display = (0, '公开')
