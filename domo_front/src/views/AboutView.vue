@@ -34,7 +34,7 @@ onMounted(() => {
             sysVersion.value = res.data.version;
         }
     })
-    getHitokotoApi().then(({ data }) => {
+    getHitokotoApi().then(data => {
         hitokoto.value = data;
     }).catch(console.error)
 })

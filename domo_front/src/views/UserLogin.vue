@@ -85,4 +85,8 @@ onMounted(async () => {
     text-align: center;
     font: small-caps bold 25px/1 sans-serif;
 }
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 50px white inset;
+  background-color: white;
+}
 </style>
