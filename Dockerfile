@@ -1,4 +1,4 @@
-FROM python:3.9.18-slim-bullseye
+FROM astral/uv:0.8-python3.13-bookworm-slim
 
 # 工作目录
 WORKDIR /usr/local/domo
@@ -6,7 +6,8 @@ WORKDIR /usr/local/domo
 # 复制代码
 COPY ./domo /usr/local/domo
 # 安装依赖库
-RUN pip install --no-cache-dir -r requirements_pro.txt -i https://mirrors.aliyun.com/pypi/simple/ && pip cache purge
+# RUN pip install --no-cache-dir -r requirements_pro.txt -i https://mirrors.aliyun.com/pypi/simple/ && pip cache purge
+RUN uv sync --no-dev --frozen --extra prod
 RUN mkdir logs
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list  # 更改 apt 为国内源
 # 暴露端口
