@@ -101,8 +101,9 @@ class FileViewSet(mixins.CreateModelMixin,
                                             content_type='application/octet-stream')
                 else:
                     # 正式环境配置跳转，由 nginx 负责下载
+                    logger.info(f'file_path: {instance.file_path.name}')
                     headers = {
-                        'X-Accel-Redirect': f'/{urllib.parse.quote(instance.file_path.path)}',
+                        'X-Accel-Redirect': f'/{urllib.parse.quote(instance.file_path.name)}',
                         'X-Accel-Buffering': 'yes',
                         'Content-Type': 'application/octet-stream',
                         'Content-Disposition': f'attachment; filename={urllib.parse.quote(instance.filename)}'

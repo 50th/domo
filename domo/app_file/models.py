@@ -1,9 +1,12 @@
+import logging
 import uuid
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 def create_file_path(instance: 'File', filename: str):
@@ -17,6 +20,7 @@ def create_file_path(instance: 'File', filename: str):
     if not file_dir.exists():
         file_dir.mkdir(parents=True)
     file_path = file_dir / f'{filename}.{uuid.uuid4().hex}'
+    logger.info(f'file_dir: {file_dir}')
     return file_path
 
 

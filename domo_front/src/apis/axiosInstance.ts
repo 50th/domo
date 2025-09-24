@@ -52,8 +52,7 @@ export class Request {
       (res: AxiosResponse) => {
         if (res.headers['content-type'].startsWith('application/json')) {
           // console.log(res)
-          const resCode = res.data.code
-          if (resCode != 0) {
+          if (res.data.code != undefined && res.data.code != 0) {
             ElMessage.warning(res.data.msg)
           }
           return res.data
