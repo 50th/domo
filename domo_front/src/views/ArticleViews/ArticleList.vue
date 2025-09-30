@@ -28,16 +28,13 @@
         </el-col>
     </el-row>
 
-    <el-row v-if="articleList.length > 0" style="margin-top: 15px;">
+    <el-row  style="margin-top: 15px;">
         <el-col :span="10" :offset="7">
-            <el-pagination style="justify-content: center;" layout="prev, pager, next" :page-size="pageSize"
+            <el-pagination v-if="articleList.length > 0" style="justify-content: center;" layout="prev, pager, next" :page-size="pageSize"
                 :pager-count="5" :total="articleCount" @current-change="handleCurrentChange" />
+            <el-empty v-else style="text-align: center;" description="没有文章" />
         </el-col>
     </el-row>
-    <el-row v-else>
-        <el-empty description="没有文章" />
-    </el-row>
-
 
 </template>
 

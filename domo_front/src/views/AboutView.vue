@@ -1,17 +1,17 @@
 <template>
     <el-row>
         <el-col style="text-align: center;">
-            <el-card style="max-width: 550px; margin: auto;" shadow="hover">
+            <el-card style="" shadow="hover" class="home-box">
                 <template #header>
-                    <div class="home-box">
-                        <span class="title">Domo</span>
-                        <span class="version">{{ sysVersion }}</span>
+                    <div>
+                        <p class="title">Domo</p>
+                        <p class="version">{{ sysVersion }}</p>
                     </div>
                 </template>
                 <img src="@/assets/about.jpg" style="width: 100%" />
                 <template #footer>
-                    <div class="home-box">
-                        <p>{{ hitokoto.hitokoto }} -- {{ hitokoto.from }}</p>
+                    <div>
+                        <p v-if="hitokoto.hitokoto">{{ hitokoto.hitokoto }} -- {{ hitokoto.from }}</p>
                     </div>
                 </template>
             </el-card>
@@ -25,7 +25,7 @@ import { sysInfoApi, getHitokotoApi } from '@/apis/sysApis';
 import type { Hitokoto } from '@/interfaces';
 
 const sysVersion = ref<string | null>(null);
-const hitokoto = ref<Hitokoto>({ id: '', hitokoto: '人民万岁！', from: '毛泽东', from_who: '毛泽东', uuid: '' });
+const hitokoto = ref<Hitokoto>({ id: '', hitokoto: '', from: '', from_who: '', uuid: '' });
 
 
 onMounted(() => {
@@ -36,12 +36,18 @@ onMounted(() => {
     })
     getHitokotoApi().then(data => {
         hitokoto.value = data;
-    }).catch(console.error)
+    }).catch(
+        err => {
+            console.error('获取一言失败', err);
+            hitokoto.value = { id: '', hitokoto: '人民万岁！', from: '毛泽东', from_who: '毛泽东', uuid: '' };
+        }
+    )
 })
 </script>
 <style scoped>
 .home-box {
-    position: relative;
+    max-width: 550px;
+    margin: auto;
 
     .title {
         font-size: 2.5rem;
@@ -51,9 +57,7 @@ onMounted(() => {
     .version {
         font-size: 1rem;
         color: #999;
-        position: absolute;
-        right: 8rem;
-        bottom: 0.5rem;
+        text-align: right;
     }
 
     p {
